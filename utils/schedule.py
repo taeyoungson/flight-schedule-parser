@@ -66,7 +66,15 @@ class Schedule:
                 return "🤬STBY"
             case _:
                 pass
-        return f"🛫{self.flight.replace('/', ' - ')}"
+
+        if self.arrive_at == "Incheon International Airport":
+            emoji = "🛬"
+        elif self.depart_at == "Incheon International Airport":
+            emoji = "🛫"
+        else:
+            emoji = "✈️"
+
+        return f"{emoji}{self.flight.replace('/', ' - ')}"
 
     def description(self) -> str:
         match self.flight:
@@ -128,6 +136,8 @@ def parse_schedule(year: int, month: int, rows: list[str]) -> list[Schedule]:
     cur_month_days = times.get_days_in_month(year, month)
     schedules = []
     for day in range(cur_month_days):
+        if day >= len(rows):
+            break
         if ScheduleType.DAY_OFF.value in rows[day]:
             schedules.append(
                 Schedule(
