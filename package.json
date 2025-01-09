@@ -1,0 +1,23 @@
+{
+  "devDependencies": {
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "format": "npm run format:isort && npm run format:black",
+    "format:isort": "git diff --name-only --cached --diff-filter=d | grep '.py$' | xargs isort --profile=google",
+    "format:black": "git diff --name-only --cached --diff-filter=d | grep '.py$' | xargs black --line-length=120",
+    "check": "npm run check:isort && npm run check:pylint",
+    "check:isort": "git diff --name-only --cached --diff-filter=d | grep '.py$' | xargs isort --profile=google --check-only",
+    "check:pylint": "git diff --name-only --cached --diff-filter=d | grep '.py$' | xargs pylint --rcfile .pylintrc",
+    "test": "pytest"
+  },
+  "lint-staged": {
+    "*.py": [
+      "isort --profile=google",
+      "black --line-length=120",
+      "pylint --rcfile .pylintrc"
+    ]
+  }
+}
