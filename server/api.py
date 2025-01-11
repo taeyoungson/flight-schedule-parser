@@ -3,6 +3,7 @@ import base64
 import io
 
 import fastapi
+import mangum
 from PIL import Image
 import uvicorn
 
@@ -10,6 +11,12 @@ from jobs import parse_data_from_image
 from server import dto
 
 app = fastapi.FastAPI()
+handler = mangum.Mangum(app)
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 
 
 @app.post("/img")
@@ -19,7 +26,7 @@ def parse_schedule(req: dto.ImageData):
 
 
 def main(opts: argparse.Namespace):
-    uvicorn.run("server.api:app", port=opts.port, host=opts.host)
+    uvicorn.run("server.api:app", host=opts.host, port=opts.port)
 
 
 if __name__ == "__main__":
