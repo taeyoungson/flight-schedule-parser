@@ -1,10 +1,7 @@
 import argparse
-import base64
-import io
 
 import fastapi
 import mangum
-from PIL import Image
 import uvicorn
 
 from jobs import parse_data_from_image
@@ -19,10 +16,9 @@ def health():
     return {"status": "ok"}
 
 
-@app.post("/img")
-def parse_schedule(req: dto.ImageData):
-    img = Image.open(io.BytesIO(base64.b64decode(req.img_base64)))
-    parse_data_from_image.get_flight_schedule(img)
+@app.post("/schedule")
+def parse_schedule(req: dto.ScheduleData):
+    parse_data_from_image.get_flight_schedule(req.result)
 
 
 def main(opts: argparse.Namespace):

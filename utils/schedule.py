@@ -7,7 +7,6 @@ from loguru import logger
 import pytz
 
 from utils import airports as apt
-from utils import times
 
 _DATE_PATTERN = re.compile(r"[0-9]{2}\/[0-9]{2}")
 _FLIGHT_PATTERN = re.compile(r"[A-Z]{3}\/[A-Z]{3}")
@@ -72,7 +71,7 @@ class Schedule:
         elif self.depart_at == "Incheon International Airport":
             emoji = "🛫"
         else:
-            emoji = "✈️"
+            raise ValueError(f"Invalid flight schedule, {self.depart_at}, {self.arrive_at}")
 
         return f"{emoji}{self.flight.replace('/', ' - ')}"
 
@@ -125,57 +124,72 @@ def _parse_single_flight_schedule(year: int, month: int, day: int, flight: str, 
     )
 
 
-def parse_schedule(year: int, month: int, rows: list[str]) -> list[Schedule]:
-    start = 0
-    while True:
-        if _DATE_PATTERN.search(rows[start]):
-            break
-        start += 1
-
-    rows = rows[start:]
-    cur_month_days = times.get_days_in_month(year, month)
+def parse_schedule(ocr_result: str) -> list[Schedule]:
+    year = datetime.datetime.now().year if datetime.datetime.now().month < 12 else datetime.datetime.now().year + 1
+    date_iter = _DATE_PATTERN.finditer(ocr_result)
     schedules = []
-    for day in range(cur_month_days):
-        if day >= len(rows):
-            break
-        if ScheduleType.DAY_OFF.value in rows[day]:
+    date_group = next(date_iter)
+    start_second = 0
+    while start_second < len(ocr_result):
+        start = date_group.start()
+        end = date_group.end()
+        try:
+            date_group_next = next(date_iter)
+            start_second = date_group_next.start()
+        except StopIteration:
+            start_second = len(ocr_result)
+
+        schedule_repr = ocr_result[start:start_second].replace("\n", " ")
+        month = int(ocr_result[start:end][:2])
+        day = int(ocr_result[start:end][3:5])
+        date_group = date_group_next
+
+        if ScheduleType.DAY_OFF.value in schedule_repr:
             schedules.append(
                 Schedule(
-                    date=datetime.datetime(year, month, day + 1),
+                    date=datetime.datetime(year, month, day),
                     flight=ScheduleType.DAY_OFF.value,
-                    std=datetime.date(year, month, day + 1),
+                    std=datetime.date(year, month, day),
                 )
             )
-        elif ScheduleType.STBY.value in rows[day]:
+        elif ScheduleType.STBY.value in schedule_repr:
             schedules.append(
                 Schedule(
-                    date=datetime.datetime(year, month, day + 1),
+                    date=datetime.datetime(year, month, day),
                     flight=ScheduleType.STBY.value,
-                    std=datetime.date(year, month, day + 1),
+                    std=datetime.date(year, month, day),
                 )
             )
 
-        is_flight_exists = _FLIGHT_PATTERN.search(rows[day])
+        is_flight_exists = _FLIGHT_PATTERN.search(schedule_repr)
         if is_flight_exists:
-            flight = _FLIGHT_PATTERN.findall(rows[day])
+            flight = _FLIGHT_PATTERN.findall(schedule_repr)
 
             if len(flight) == 1:
-                timestring = rows[day][is_flight_exists.end() :]
-                schedule = _parse_single_flight_schedule(year, month, day + 1, flight[0], timestring)
-                if schedule:
-                    schedules.append(schedule)
+                timestring = schedule_repr[is_flight_exists.end() :]
+                try:
+                    schedule = _parse_single_flight_schedule(year, month, day, flight[0], timestring)
+                    if schedule:
+                        schedules.append(schedule)
+                except Exception as e:  # pylint: disable=broad-exception-caught
+                    logger.error(e)
+                    continue
 
             elif len(flight) > 1:
-                inner_rows = rows[day].split("\n")
-                for row in inner_rows:
-                    is_flight_exists = _FLIGHT_PATTERN.search(row)
-                    if is_flight_exists:
-                        timestring = row[is_flight_exists.end() :]
-                        schedule = _parse_single_flight_schedule(
-                            year, month, day + 1, is_flight_exists.group(), timestring
-                        )
-                        if schedule:
-                            schedules.append(schedule)
+                inner_rows = schedule_repr.split("\n")
+                try:
+                    for row in inner_rows:
+                        is_flight_exists = _FLIGHT_PATTERN.search(row)
+                        if is_flight_exists:
+                            timestring = row[is_flight_exists.end() :]
+                            schedule = _parse_single_flight_schedule(
+                                year, month, day + 1, is_flight_exists.group(), timestring
+                            )
+                            if schedule:
+                                schedules.append(schedule)
+                except Exception as e:  # pylint: disable=broad-exception-caught
+                    logger.error(e)
+                    continue
         else:
             continue
 

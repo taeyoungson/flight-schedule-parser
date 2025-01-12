@@ -1,27 +1,15 @@
-import datetime
-
 from loguru import logger
-from PIL import Image
 import pytz
 
 from calendars import gcal
-from utils import ocr
 from utils import schedule
 
-_OCR_DELIMITER = "\n\n"
+_OCR_DELIMITER = "\n"
 _TIMEZONE = "Asia/Seoul"
 
 
-def get_flight_schedule(img: Image.Image) -> None:
-    extracted = ocr.image_to_string(img).split(_OCR_DELIMITER)
-    month = int(schedule.parse_schedule_month(extracted))
-
-    if datetime.datetime.now().month > month:
-        year = datetime.datetime.now().year + 1
-    else:
-        year = datetime.datetime.now().year
-    logger.info(f"Parsing schedule for {year} - {month}")
-    schedules = schedule.parse_schedule(year, month, extracted)
+def get_flight_schedule(ocr_result: str) -> None:
+    schedules = schedule.parse_schedule(ocr_result)
 
     calendar = gcal.GoogleCalendar()
     for s in schedules:
