@@ -127,9 +127,13 @@ def _parse_single_flight_schedule(year: int, month: int, day: int, flight: str, 
 def parse_schedule(ocr_result: str) -> list[Schedule]:
     year = datetime.datetime.now().year if datetime.datetime.now().month < 12 else datetime.datetime.now().year + 1
     date_iter = _DATE_PATTERN.finditer(ocr_result)
+
+    if not date_iter:
+        return []
+
     schedules = []
-    date_group = next(date_iter)
     start_second = 0
+    date_group = next(date_iter)
     while start_second < len(ocr_result):
         start = date_group.start()
         end = date_group.end()
@@ -138,6 +142,7 @@ def parse_schedule(ocr_result: str) -> list[Schedule]:
             start_second = date_group_next.start()
         except StopIteration:
             start_second = len(ocr_result)
+            date_group_next = None
 
         schedule_repr = ocr_result[start:start_second].replace("\n", " ")
         month = int(ocr_result[start:end][:2])
