@@ -7,11 +7,14 @@ class GoogleSettings(pydantic_settings.BaseSettings):
     calendar_id: str = pydantic.Field(...)
 
     token: str = pydantic.Field(...)
+    token_uri: str = pydantic.Field(...)
+    client_id: str = pydantic.Field(...)
     refresh_token: str = pydantic.Field(...)
 
     model_config = pydantic_settings.SettingsConfigDict(
         env_prefix="GOOGLE_",
         env_file=".env.dev",
+        extra="allow",
     )
 
 
