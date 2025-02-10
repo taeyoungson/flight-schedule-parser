@@ -13,19 +13,38 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Zip specific folders
+      - name: Zip python dependencies
         run: |
-          zip -r aws-lambda-python-codes-v0.0.${{ github.run_number }}.zip utils/ jobs/ calendars/ server/  
-          ls -lh aws-lambda-python-codes-v0.0.${{ github.run_number }}.zip
+          python -m pip install --upgrade pip
+          mkdir -p dependencies
+          pip install -r requirements.txt -t ./dependencies
+          zip -r aws-lambda-python-dependencies-v0.0.${{ github.run_number }}.zip dependencies/
 
-      - name: Create GitHub Release
+      - name: Zip source codes
+        run: |
+          zip -r aws-lambda-source-codes-v0.0.${{ github.run_number }}.zip utils/ jobs/ calendars/ server/  
+          ls -lh aws-lambda-source-codes-v0.0.${{ github.run_number }}.zip
+
+      - name: Create GitHub Release (Source codes)
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v0.0.${{ github.run_number }}
-          name: "aws-lambda-python-codes v0.0.${{ github.run_number }}"
+          name: "aws-lambda-source-codes v0.0.${{ github.run_number }}"
           body: "Release scheulder codes v0.0.${{ github.run_number }}"
           draft: false
           prerelease: false
-          files: aws-lambda-python-codes-v0.0.${{ github.run_number }}.zip
+          files: aws-lambda-source-codes-v0.0.${{ github.run_number }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+      - name: Create GitHub Release (Python dependencies)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v0.0.${{ github.run_number }}
+          name: "aws-lambda-python-dependencies v0.0.${{ github.run_number }}"
+          body: "Release scheulder dependencies v0.0.${{ github.run_number }}"
+          draft: false
+          prerelease: false
+          files: aws-lambda-python-dependencies-v0.0.${{ github.run_number }}.zip
+        env:
+            GITHUB_TOKEN: ${{ secrets.GH_PAT }}
