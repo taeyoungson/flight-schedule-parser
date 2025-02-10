@@ -17,7 +17,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           mkdir -p python 
-          pip install --platform manylinux2014_x86_84 -r requirements.txt -t ./python
+          pip install --platform manylinux2014_x86_84 -r requirements.txt -t ./python --only-binary=:all:
           zip -r aws-lambda-python-dependencies-v0.0.${{ github.run_number }}.zip python/
 
       - name: Zip source codes
