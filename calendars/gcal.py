@@ -13,6 +13,9 @@ class GoogleCalendar:
     def __init__(self):
         self._credentials = credentials.Credentials(
             token=self._config.token,
+            token_uri=self._config.token_uri,
+            client_id=self._config.client_id,
+            client_secret=self._config.client_secret,
             refresh_token=self._config.refresh_token,
         )
         self._calendar = gcal.GoogleCalendar(
