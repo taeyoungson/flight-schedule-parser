@@ -22,7 +22,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v0.0.${{ github.run_number }}
-          release_name: "aws-lambda-python-codes v0.0.${{ github.run_number }}"
+          name: "aws-lambda-python-codes v0.0.${{ github.run_number }}"
           body: "Release scheulder codes v0.0.${{ github.run_number }}"
           draft: false
           prerelease: false
