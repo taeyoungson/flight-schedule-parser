@@ -1,0 +1,31 @@
+name: Create Release on Main Push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Zip specific folders
+        run: |
+          zip -r aws-lambda-python-codes-v0.0.${{ github.run_number }}.zip utils/ jobs/ calendars/ server/  
+          ls -lh aws-lambda-python-codes-v0.0.${{ github.run_number }}.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v0.0.${{ github.run_number }}
+          release_name: "aws-lambda-python-codes v0.0.${{ github.run_number }}"
+          body: "Release scheulder codes v0.0.${{ github.run_number }}"
+          draft: false
+          prerelease: false
+          files: aws-lambda-python-codes-v0.0.${{ github.run_number }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

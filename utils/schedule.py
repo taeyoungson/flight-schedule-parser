@@ -66,9 +66,9 @@ class Schedule:
             case _:
                 pass
 
-        if self.arrive_at == "Incheon International Airport":
+        if self.arrive_at == "Incheon International Airport" or self.arrive_at == "Gimpo International Airport":
             emoji = "🛬"
-        elif self.depart_at == "Incheon International Airport":
+        elif self.depart_at == "Incheon International Airport" or self.depart_at == "Gimpo International Airport":
             emoji = "🛫"
         else:
             raise ValueError(f"Invalid flight schedule, {self.depart_at}, {self.arrive_at}")
