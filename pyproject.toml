@@ -6,7 +6,6 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "absl-py==2.1.0",
-    "aiohappyeyeballs==2.4.4",
     "aiohttp==3.10.5",
     "aiosignal==1.2.0",
     "airportsdata==20241001",
