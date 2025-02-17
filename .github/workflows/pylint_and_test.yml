@@ -23,9 +23,9 @@ jobs:
         uv sync --all-extras --dev
     - name: Analysing the code with pylint
       run: |
-        isort --check-only --profile=google $(git ls-files '*.py')
-        black --check --line-length=120 $(git ls-files '*.py')
-        pylint --rcfile .pylintrc $(git ls-files '*.py')
+        uv run isort --check-only --profile=google $(git ls-files '*.py')
+        uv run black --check --line-length=120 $(git ls-files '*.py')
+        uv run pylint --rcfile .pylintrc $(git ls-files '*.py')
     - name: Run all tests
       run: |
         uv run pytest
