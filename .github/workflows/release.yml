@@ -18,13 +18,18 @@ jobs:
         with:
           version: "0.6.0"
 
-      - name: Zip python dependencies
+      - name: Zip python dependencies in Amazon Linux 2
         run: |
           python -m pip install --upgrade pip
           mkdir -p python
           uv export --no-hashes --format requirements-txt > requirements.txt
-          pip install --platform manylinux2014_x86_64 -r requirements.txt -t python/ --only-binary=:all:
-
+          
+          docker run --rm -v $(pwd):/lambda_layer -w /lambda_layer \
+            amazonlinux:2 bash -c "\
+              yum install -y python3 pip && \
+              pip3 install --upgrade pip && \
+              pip3 install -r requirements.txt -t python/ --only-binary=:all:"
+          
           zip -r aws-lambda-python-dependencies-v0.0.${{ github.run_number }}.zip python/
           rm requirements.txt
 
@@ -33,26 +38,17 @@ jobs:
           zip -r aws-lambda-source-codes-v0.0.${{ github.run_number }}.zip utils/ jobs/ calendars/ server/  
           ls -lh aws-lambda-source-codes-v0.0.${{ github.run_number }}.zip
 
-      - name: Create GitHub Release (Source codes)
+      - name: Create GitHub Release (Source codes & Dependencies)
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v0.0.${{ github.run_number }}
-          name: "aws-lambda-source-codes v0.0.${{ github.run_number }}"
-          body: "Release scheulder codes v0.0.${{ github.run_number }}"
+          name: "AWS Lambda Release v0.0.${{ github.run_number }}"
+          body: "Release AWS Lambda source codes & dependencies v0.0.${{ github.run_number }}"
           draft: false
           prerelease: false
-          files: aws-lambda-source-codes-v0.0.${{ github.run_number }}.zip
+          files: |
+            aws-lambda-source-codes-v0.0.${{ github.run_number }}.zip
+            aws-lambda-python-dependencies-v0.0.${{ github.run_number }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
-      - name: Create GitHub Release (Python dependencies)
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v0.0.${{ github.run_number }}
-          name: "aws-lambda-python-dependencies v0.0.${{ github.run_number }}"
-          body: "Release scheulder dependencies v0.0.${{ github.run_number }}"
-          draft: false
-          prerelease: false
-          files: aws-lambda-python-dependencies-v0.0.${{ github.run_number }}.zip
-        env:
-            GITHUB_TOKEN: ${{ secrets.GH_PAT }}
