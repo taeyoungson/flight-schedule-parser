@@ -48,7 +48,7 @@ dependencies = [
     "msgpack==1.1.0",
     "multidict==6.1.0",
     "mypy-extensions==1.0.0",
-    "oauth2client==3.0.0",
+    "oauth2client==4.0.0",
     "oauthlib==3.2.2",
     "packaging==24.2",
     "pathspec==0.12.1",
