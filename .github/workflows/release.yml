@@ -25,10 +25,10 @@ jobs:
           uv export --no-hashes --format requirements-txt > requirements.txt
           
           docker run --rm -v $(pwd):/lambda_layer -w /lambda_layer \
-            amazonlinux:2 bash -c "\
-              yum install -y python3 pip && \
-              pip3 install --upgrade pip && \
-              pip3 install -r requirements.txt -t python/ --only-binary=:all:"
+            amazonlinux:2023 bash -c "\
+              dnf install -y python3.11 pip && \
+              python3.11 -m pip install --upgrade pip && \
+              python3.11 -m pip install -r requirements.txt -t python/ --only-binary=:all:"
           
           zip -r aws-lambda-python-dependencies-v0.0.${{ github.run_number }}.zip python/
           rm requirements.txt
