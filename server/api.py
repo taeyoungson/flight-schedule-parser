@@ -4,7 +4,7 @@ import fastapi
 import mangum
 import uvicorn
 
-from jobs import parse_data_from_image
+from jobs import parse_schedule
 from server import dto
 
 app = fastapi.FastAPI()
@@ -17,8 +17,8 @@ def health():
 
 
 @app.post("/schedule")
-def parse_schedule(req: dto.ScheduleData):
-    parse_data_from_image.get_flight_schedule(req.result)
+def parse(req: dto.ScheduleData):
+    parse_schedule.build_flight_schedule(req.result)
 
 
 def main(opts: argparse.Namespace):

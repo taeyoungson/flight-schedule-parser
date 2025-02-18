@@ -2,13 +2,15 @@ from loguru import logger
 import pytz
 
 from calendars import gcal
+from kakao import watcher
 from utils import schedule
 
 _OCR_DELIMITER = "\n"
 _TIMEZONE = "Asia/Seoul"
 
 
-def get_flight_schedule(ocr_result: str) -> None:
+@watcher.report
+def build_flight_schedule(ocr_result: str) -> None:
     schedules = schedule.parse_schedule(ocr_result)
 
     calendar = gcal.GoogleCalendar()
