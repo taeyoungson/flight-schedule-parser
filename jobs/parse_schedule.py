@@ -1,8 +1,8 @@
 from loguru import logger
 import pytz
 
-from calendars import gcal
-from kakao import watcher
+from third_party.calendars import gcal
+from third_party.kakao import watcher
 from utils import schedule
 
 _OCR_DELIMITER = "\n"

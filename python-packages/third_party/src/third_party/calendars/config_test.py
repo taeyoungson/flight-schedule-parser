@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from calendars import config
+from . import config
 
 
 @pytest.mark.parametrize(

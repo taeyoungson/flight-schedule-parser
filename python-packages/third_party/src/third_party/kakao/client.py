@@ -4,7 +4,7 @@ from loguru import logger
 import requests
 from requests import exceptions
 
-from kakao import auth
+from . import auth
 
 _TIMEOUT = 10
 _SEND_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send"
@@ -38,3 +38,6 @@ def send_to_me(message: str) -> None:
         logger.error(f"HTTP Error: {errh}, Status Code: {response.status_code}")
     except exceptions.RequestException as err:
         logger.error(f"Request Error: {err}")
+
+
+send_to_me("Hello, World!")

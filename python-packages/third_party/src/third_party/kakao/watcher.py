@@ -1,4 +1,4 @@
-from kakao import client
+from . import client
 
 
 def report(func):

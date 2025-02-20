@@ -4,7 +4,7 @@ from gcsa import event
 from gcsa import google_calendar as gcal
 from google.oauth2 import credentials
 
-from calendars import config as gcal_config
+from . import config as gcal_config
 
 
 class GoogleCalendar:
