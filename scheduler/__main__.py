@@ -1,4 +1,5 @@
 import time
+import jobs  # noqa: F401
 
 from scheduler import instance
 from loguru import logger

@@ -1,5 +1,3 @@
-import datetime
-import gcsa
 from loguru import logger
 from jobs import monitor_flights
 from scheduler import instance
