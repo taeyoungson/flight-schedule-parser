@@ -35,7 +35,7 @@ jobs:
 
       - name: Zip source codes
         run: |
-          zip -r aws-lambda-source-codes-v0.0.${{ github.run_number }}.zip utils/ jobs/ calendars/ server/ kakao/ 
+          zip -r aws-lambda-source-codes-v0.0.${{ github.run_number }}.zip utils/ jobs/ server/ scheduler/
           ls -lh aws-lambda-source-codes-v0.0.${{ github.run_number }}.zip
 
       - name: Create GitHub Release (Source codes & Dependencies)

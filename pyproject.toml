@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "airportsdata>=20241001",
+    "apscheduler>=3.11.0",
     "fastapi>=0.115.8",
     "gcsa>=2.5.1",
     "loguru>=0.7.3",

@@ -24,9 +24,7 @@ def send_to_me(message: str) -> None:
                     {
                         "object_type": "text",
                         "text": message,
-                        "link": {
-                            "web_url": "https://developers.kakao.com",
-                        },
+                        "link": None,
                     }
                 ),
             },
@@ -38,6 +36,3 @@ def send_to_me(message: str) -> None:
         logger.error(f"HTTP Error: {errh}, Status Code: {response.status_code}")
     except exceptions.RequestException as err:
         logger.error(f"Request Error: {err}")
-
-
-send_to_me("Hello, World!")
