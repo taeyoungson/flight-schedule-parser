@@ -17,7 +17,7 @@ def _filter_flights_of_interest(flights: list[dict[str, str]]) -> list[dict]:
     )
 
 
-def main(dep_iata: str, arr_iata: str, airline: str = "asiana", **kwargs):
+def main(dep_iata: str, arr_iata: str, airline: str = "asiana"):
     logger.debug(f"Monitor Flights: {dep_iata} -> {arr_iata} ({airline})")
     flights = aviation_request.get_live_flights(
         dep_iata=dep_iata,
@@ -25,7 +25,6 @@ def main(dep_iata: str, arr_iata: str, airline: str = "asiana", **kwargs):
         airline=airline,
     )
 
-    breakpoint()
     flights_of_interests = _filter_flights_of_interest(flights)
     assert len(flights_of_interests) == 1, (
         f"Expected 1 flight, but got {len(flights_of_interests)}, {flights_of_interests}"
@@ -41,10 +40,10 @@ def main(dep_iata: str, arr_iata: str, airline: str = "asiana", **kwargs):
     if departure_delay + arrival_delay > _MIN_DELAY:
         kakaotalk.send_to_me(
             f"""
-                비행 {flight["flight"]["iata"]}편이지연되었어요 😓\n
+                비행 {flight["flight"]["iata"]}편이 지연되었어요 😓\n
                 출발지: {flight["departure"]["airport"]}\n
                 도착지: {flight["arrival"]["airport"]}\n
-                지연됨: 총 {total_delay}분 (출발: {departure_delay}분, 도착: {arrival_delay}분)\n"
+                지연됨: 총 {total_delay}분 (출발: {departure_delay}분, 도착: {arrival_delay}분)
             """
         )
 

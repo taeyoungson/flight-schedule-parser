@@ -4,7 +4,6 @@ import pytz
 from third_party.calendars import gcal
 from third_party.kakao import watcher
 from utils import schedule
-from cron import instance
 
 _TIMEZONE = "Asia/Seoul"
 

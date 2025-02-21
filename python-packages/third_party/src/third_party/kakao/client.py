@@ -24,9 +24,7 @@ def send_to_me(message: str) -> None:
                     {
                         "object_type": "text",
                         "text": message,
-                        "link": {
-                            "web_url": "https://developers.kakao.com",
-                        },
+                        "link": None,
                     }
                 ),
             },

@@ -1,4 +1,5 @@
 import datetime
+from typing import Iterable
 
 from gcsa import event
 from gcsa import google_calendar as gcal
@@ -26,6 +27,9 @@ class GoogleCalendar:
     def _create_event(self, evt: event.Event) -> None:
         self._calendar.add_event(evt)
 
+    def _get_events(self, time_min: datetime.datetime, time_max: datetime.datetime) -> Iterable[event.Event]:
+        return self._calendar.get_events(time_min=time_min, time_max=time_max)
+
     def create_event(
         self,
         summary: str,
@@ -46,6 +50,9 @@ class GoogleCalendar:
             location=location,
         )
         self._create_event(evt)
+
+    def get_events(self, time_min: datetime.datetime, time_max: datetime.datetime) -> list[event.Event]:
+        return list(self._get_events(time_min, time_max))
 
 
 def load_google_calendar_client():
