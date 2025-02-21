@@ -8,9 +8,8 @@ from . import config as gcal_config
 
 
 class GoogleCalendar:
-    _config = gcal_config.load_config()
-
     def __init__(self):
+        self._config = gcal_config.load_config()
         self._credentials = credentials.Credentials(
             token=self._config.token,
             token_uri=self._config.token_uri,
@@ -49,11 +48,5 @@ class GoogleCalendar:
         self._create_event(evt)
 
 
-if __name__ == "__main__":
-    client = GoogleCalendar()
-    client.create_event(
-        summary="Test Event",
-        timezone="Asia/Seoul",
-        start=datetime.datetime.now(),
-        end=datetime.datetime.now() + datetime.timedelta(hours=1),
-    )
+def load_google_calendar_client():
+    return GoogleCalendar()
