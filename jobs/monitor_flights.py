@@ -4,7 +4,7 @@ from third_party.kakao import client as kakaotalk
 from utils import times as time_utils
 
 
-_MIN_DELAY = 1
+_MIN_DELAY = 20
 
 
 def _filter_flights_of_interest(flights: list[dict[str, str]]) -> list[dict]:
@@ -37,7 +37,7 @@ def main(dep_iata: str, arr_iata: str, airline: str = "asiana"):
     arrival_delay = flight["arrival"]["delay"] or 0
     total_delay = departure_delay + arrival_delay
 
-    if departure_delay + arrival_delay > _MIN_DELAY:
+    if departure_delay + arrival_delay >= _MIN_DELAY:
         kakaotalk.send_to_me(
             f"""
                 비행 {flight["flight"]["iata"]}편이 지연되었어요 😓\n
@@ -46,7 +46,3 @@ def main(dep_iata: str, arr_iata: str, airline: str = "asiana"):
                 지연됨: 총 {total_delay}분 (출발: {departure_delay}분, 도착: {arrival_delay}분)
             """
         )
-
-
-if __name__ == "__main__":
-    main("NGO", "ICN")

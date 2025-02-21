@@ -13,7 +13,8 @@
   },
   "lint-staged": {
     "*.py": [
-      "ruff format"
+      "ruff format",
+      "ruff check"
     ]
   }
 }
