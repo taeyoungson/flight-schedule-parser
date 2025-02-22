@@ -41,7 +41,7 @@ class BaseJob:
 
     @property
     def id(self) -> str:
-        return f"{self.func.__module__}.{self.func.__name__}"
+        return f"{self.func.__module__}.{self.func.__name__}.{self._kwargs.values()}"
 
     @property
     def args(self):
