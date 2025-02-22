@@ -23,7 +23,7 @@ def _parse_kwargs_from_event(event) -> dict[str, str]:
     }
 
 
-@instance.DefaultBackgroundScheduler.scheduled_job(jobs.TriggerType.CRON, hour=2)
+@instance.DefaultBackgroundScheduler.scheduled_job(jobs.TriggerType.CRON, hour=0, minute=10)
 def main():
     logger.debug("Registering daily jobs...")
 

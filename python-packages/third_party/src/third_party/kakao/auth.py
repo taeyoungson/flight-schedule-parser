@@ -45,7 +45,34 @@ def _print_get_code_url():
     logger.info(f"Open the following URL in your browser and authorize the app: {redirect_uri}")
 
 
-def get_authorization_token() -> str:
+def _refresh_auth_token(original_token: dict[str, str]) -> dict[str, str]:
+    config = kakao_config.load_config()
+
+    try:
+        response = requests.post(
+            url=_AUTH_URL,
+            headers={"Content-Type": "application/x-www-form-urlencoded;charset=utf-8"},
+            data={
+                "grant_type": "refresh_token",
+                "client_id": config.api_key,
+                "refresh_token": original_token["refresh_token"],
+            },
+            timeout=_TIMEOUT,
+        )
+        response.raise_for_status()
+        refreshed_token = response.json()
+
+        if "refresh_token" not in refreshed_token:
+            refreshed_token["refresh_token"] = original_token["refresh_token"]
+            refreshed_token["refresh_token_expires_in"] = original_token["refresh_token_expires_in"]
+        return refreshed_token
+
+    except exceptions.HTTPError as errh:
+        logger.error(f"HTTP Error: {errh}, Status Code: {response.status_code}")
+        raise errh
+
+
+def get_authorization_token() -> dict[str, str]:
     config = kakao_config.load_config()
 
     # auth code not provided
@@ -62,27 +89,12 @@ def get_authorization_token() -> str:
             return token
         # token is invalid
         else:
-            try:
-                response = requests.post(
-                    url=_AUTH_URL,
-                    headers={"Content-Type": "application/x-www-form-urlencoded;charset=utf-8"},
-                    data={
-                        "grant_type": "refresh_token",
-                        "client_id": config.api_key,
-                        "refresh_token": token["refresh_token"],
-                    },
-                    timeout=_TIMEOUT,
-                )
-                response.raise_for_status()
-                token = response.json()
-                with open(_JSON_TOKEN_FILEPATH, mode="w", encoding="utf-8") as fp:
-                    json.dump(token, fp)
-                return token
-            except exceptions.HTTPError as errh:
-                logger.error(f"HTTP Error: {errh}, Status Code: {response.status_code}")
-                raise errh
+            refreshed_token = _refresh_auth_token(original_token=token)
+            with open(_JSON_TOKEN_FILEPATH, mode="w", encoding="utf-8") as fp:
+                json.dump(refreshed_token, fp)
+            return refreshed_token
 
-    # token file does not exist
+    # token file does not exist, generate a new one
     else:
         try:
             response = requests.post(
