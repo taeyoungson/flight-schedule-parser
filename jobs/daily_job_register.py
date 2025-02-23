@@ -23,7 +23,7 @@ def _parse_kwargs_from_event(event) -> dict[str, str]:
     }
 
 
-@instance.DefaultBackgroundScheduler.scheduled_job(jobs.TriggerType.CRON, hour=0, minute=10)
+@instance.DefaultBlockingScheduler.scheduled_job(jobs.TriggerType.CRON, hour=0, minute=10)
 def main():
     logger.debug("Registering daily jobs...")
 
@@ -56,7 +56,7 @@ def main():
 
     for job in calendar_jobs:
         logger.debug(f"Registering job: {job.description}")
-        instance.DefaultBackgroundScheduler.add_job(
+        instance.DefaultBlockingScheduler.add_job(
             id=job.id,
             name=job.name,
             func=job.func,
