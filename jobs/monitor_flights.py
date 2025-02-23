@@ -1,3 +1,5 @@
+import zoneinfo
+import datetime
 from loguru import logger
 from third_party.aviationstack import request as aviation_request
 from third_party.kakao import client as kakaotalk
@@ -15,6 +17,11 @@ def _filter_flights_of_interest(flights: list[dict[str, str]]) -> list[dict]:
             flights,
         )
     )
+
+
+def _parse_and_convert_to_kst(datetime_str: str, tz: str) -> datetime.datetime:
+    dt = time_utils.parse_datetime(datetime_str).replace(tzinfo=zoneinfo.ZoneInfo(tz))
+    return dt.astimezone(time_utils.TimeZone.SEOUL.value)
 
 
 def main(dep_iata: str, arr_iata: str, airline: str = "asiana") -> None:
@@ -35,16 +42,22 @@ def main(dep_iata: str, arr_iata: str, airline: str = "asiana") -> None:
 
     departure_delay = flight["departure"]["delay"] or 0
     arrival_delay = flight["arrival"]["delay"] or 0
-    total_delay = departure_delay + arrival_delay
-    scheduled_arrival = time_utils.parse_datetime(flight["arrival"]["scheduled"])
+    actual_departure = _parse_and_convert_to_kst(flight["departure"]["actual"], flight["departure"]["timezone"])
+    scheduled_arrival = _parse_and_convert_to_kst(flight["arrival"]["scheduled"], flight["arrival"]["timezone"])
+    scheduled_arrival = time_utils.minutes_after(scheduled_arrival, arrival_delay)
 
-    if departure_delay + arrival_delay >= _MIN_DELAY:
-        kakaotalk.send_to_me(
-            f"""
-                비행 {flight["flight"]["iata"]}편이 지연되었어요 😓
-                출발지: {flight["departure"]["airport"]}
-                도착지: {flight["arrival"]["airport"]}
-                지연됨: 총 {total_delay}분 (출발: {departure_delay}분, 도착: {arrival_delay}분)
-                도착예정시간: {time_utils.pretty_datetime(time_utils.minutes_after(scheduled_arrival, total_delay))}
-            """
-        )
+    kakaotalk.send_to_me(
+        f"""
+            비행편 {flight["flight"]["iata"]} 조회 결과
+            출발지: {flight["departure"]["airport"]}
+            도착지: {flight["arrival"]["airport"]}
+            출발 지연: 총 {departure_delay}분
+            도착 지연: 총 {arrival_delay}분
+            실제 출발: {time_utils.pretty_datetime(actual_departure)}
+            도착 예정: {time_utils.pretty_datetime(scheduled_arrival)}
+        """
+    )
+
+
+if __name__ == "__main__":
+    main("NRT", "ICN")

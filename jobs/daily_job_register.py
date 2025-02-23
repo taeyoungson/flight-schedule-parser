@@ -50,7 +50,7 @@ def main():
                 **_parse_kwargs_from_event(event),
             ).add_ctx(
                 trigger=jobs.TriggerType.DATE,
-                next_run_time=time_utils.hours_before(event.end, hours=1),
+                next_run_time=time_utils.minutes_before(event.end, minutes=20),
             )
         )
 

@@ -1,8 +1,19 @@
+import enum
 import datetime
+import zoneinfo
+
+
+class TimeZone(enum.Enum):
+    SEOUL = zoneinfo.ZoneInfo("Asia/Seoul")
+    UTC = zoneinfo.ZoneInfo("UTC")
 
 
 def hours_before(datetime_: datetime.datetime, hours: int) -> datetime.datetime:
     return datetime_ - datetime.timedelta(hours=hours)
+
+
+def minutes_before(datetime_: datetime.datetime, minutes: int) -> datetime.datetime:
+    return datetime_ - datetime.timedelta(minutes=minutes)
 
 
 def minutes_after(datetime_: datetime.datetime, minutes: int) -> datetime.datetime:
@@ -38,15 +49,19 @@ def parse_datetime(datetime_string: str) -> datetime.datetime:
 
 
 def format_datetime(datetime_: datetime.datetime) -> str:
-    return datetime.datetime.strftime(datetime_, "%Y-%m-%dT%H:%M:%S+00:00")
+    return datetime_.strftime("%Y-%m-%dT%H:%M:%S%z")
 
 
 def pretty_datetime(datetime_: datetime.datetime) -> str:
     hours = datetime_.hour
     minutes = datetime_.minute
 
+    prefix = "오전" if hours < 12 else "오후"
     if hours > 12:
         hours -= 12
-    prefix = "오전" if hours < 12 else "오후"
 
     return f"{prefix} {hours:02d}시 {minutes:02d}분"
+
+
+def to_timezone(datetime_: datetime.datetime, tzinfo: zoneinfo.ZoneInfo) -> datetime.datetime:
+    return datetime_.astimezone(tzinfo=tzinfo)
