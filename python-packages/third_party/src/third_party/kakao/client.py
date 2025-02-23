@@ -1,4 +1,5 @@
 import json
+import textwrap
 
 from loguru import logger
 import requests
@@ -8,6 +9,10 @@ from . import auth
 
 _TIMEOUT = 10
 _SEND_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send"
+
+
+def _dedent_text(message: str) -> str:
+    return textwrap.dedent(message)
 
 
 def send_to_me(message: str) -> None:
@@ -23,7 +28,7 @@ def send_to_me(message: str) -> None:
                 "template_object": json.dumps(
                     {
                         "object_type": "text",
-                        "text": message,
+                        "text": _dedent_text(message),
                         "link": None,
                     }
                 ),

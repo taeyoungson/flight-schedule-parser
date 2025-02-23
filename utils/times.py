@@ -5,6 +5,10 @@ def hours_before(datetime_: datetime.datetime, hours: int) -> datetime.datetime:
     return datetime_ - datetime.timedelta(hours=hours)
 
 
+def minutes_after(datetime_: datetime.datetime, minutes: int) -> datetime.datetime:
+    return datetime_ + datetime.timedelta(minutes=minutes)
+
+
 def get_today_as_date() -> datetime.date:
     return datetime.date.today()
 
@@ -27,3 +31,22 @@ def get_start_of_the_day(date: datetime.date) -> datetime.datetime:
 
 def get_end_of_the_day(date: datetime.date) -> datetime.datetime:
     return datetime.datetime.combine(date, datetime.time.max)
+
+
+def parse_datetime(datetime_string: str) -> datetime.datetime:
+    return datetime.datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%S+00:00")
+
+
+def format_datetime(datetime_: datetime.datetime) -> str:
+    return datetime.datetime.strftime(datetime_, "%Y-%m-%dT%H:%M:%S+00:00")
+
+
+def pretty_datetime(datetime_: datetime.datetime) -> str:
+    hours = datetime_.hour
+    minutes = datetime_.minute
+
+    if hours > 12:
+        hours -= 12
+    prefix = "오전" if hours < 12 else "오후"
+
+    return f"{prefix} {hours:02d}시 {minutes:02d}분"
