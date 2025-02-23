@@ -63,5 +63,5 @@ def pretty_datetime(datetime_: datetime.datetime) -> str:
     return f"{prefix} {hours:02d}시 {minutes:02d}분"
 
 
-def to_timezone(datetime_: datetime, tzinfo: zoneinfo.ZoneInfo) -> datetime:
+def to_timezone(datetime_: datetime.datetime, tzinfo: zoneinfo.ZoneInfo) -> datetime.datetime:
     return datetime_.astimezone(tzinfo=tzinfo)
