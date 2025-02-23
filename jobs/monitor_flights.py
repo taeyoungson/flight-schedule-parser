@@ -6,9 +6,6 @@ from third_party.kakao import client as kakaotalk
 from utils import times as time_utils
 
 
-_MIN_DELAY = 20
-
-
 def _filter_flights_of_interest(flights: list[dict[str, str]]) -> list[dict]:
     return list(
         filter(
@@ -57,7 +54,3 @@ def main(dep_iata: str, arr_iata: str, airline: str = "asiana") -> None:
             도착 예정: {time_utils.pretty_datetime(scheduled_arrival)}
         """
     )
-
-
-if __name__ == "__main__":
-    main("NRT", "ICN")
