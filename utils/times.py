@@ -45,9 +45,8 @@ def pretty_datetime(datetime_: datetime.datetime) -> str:
     hours = datetime_.hour
     minutes = datetime_.minute
 
-    prefix = "오전"
     if hours > 12:
         hours -= 12
-        prefix = "오후"
+    prefix = "오전" if hours < 12 else "오후"
 
     return f"{prefix} {hours:02d}시 {minutes:02d}분"
