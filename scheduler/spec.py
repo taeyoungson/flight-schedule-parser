@@ -5,7 +5,8 @@ JOBSTORES = {"default": memory.MemoryJobStore()}
 EXECUTORS = {"default": {"type": "threadpool", "max_workers": 20}}
 
 SCHEDULER_ARGS = {
-    "coalesce": False,
+    "coalesce": True,
+    "misfire_grace_time": 20 * 60,
     "max_instances": 1,
 }
 

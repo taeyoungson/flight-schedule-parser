@@ -8,6 +8,10 @@ class TimeZone(enum.Enum):
     UTC = zoneinfo.ZoneInfo("UTC")
 
 
+def now() -> datetime.datetime:
+    return datetime.datetime.now()
+
+
 def hours_before(datetime_: datetime.datetime, hours: int) -> datetime.datetime:
     return datetime_ - datetime.timedelta(hours=hours)
 

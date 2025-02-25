@@ -56,12 +56,16 @@ _FLIGHT_SEARCH_RESULT = {
 
 def test_monitor_flights(mocker: pytest_mock.MockFixture):
     mock_kakaotalk = mocker.patch("third_party.kakao.client.send_to_me")
+    mock_filter_flights_of_interest = mocker.patch(
+        "jobs.monitor_flights._filter_flights_of_interest", return_value=[_FLIGHT_SEARCH_RESULT]
+    )
     mock_aviation_request = mocker.patch(
         "third_party.aviationstack.request.get_live_flights", return_value=[_FLIGHT_SEARCH_RESULT]
     )
 
     monitor_flights.main("ICN", "NRT")
 
+    mock_filter_flights_of_interest.assert_called_once_with([_FLIGHT_SEARCH_RESULT])
     mock_aviation_request.assert_called_once_with(dep_iata="ICN", arr_iata="NRT", airline="asiana")
     mock_kakaotalk.assert_called_once_with(
         """
