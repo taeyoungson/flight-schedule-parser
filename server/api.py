@@ -20,8 +20,8 @@ def health():
 
 @app.get("/jobs")
 def jobs():
-    logger.info("Jobs: {instance.DefaultBackgroundScheduler.get_jobs()}")
-    return {"jobs": instance.DefaultBackgroundScheduler.get_jobs()}
+    logger.info(instance.DefaultBackgroundScheduler.print_jobs())
+    return {"jobs": instance.DefaultBackgroundScheduler.print_jobs()}
 
 
 @app.post("/register/flight")

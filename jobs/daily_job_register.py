@@ -12,7 +12,7 @@ def _check_if_flight_schedule(event) -> bool:
 
 
 def _parse_kwargs_from_event(event) -> dict[str, str]:
-    chunks = event.summary.split("-")
+    chunks = event.summary.split("->")
 
     dep_iata = chunks[-2][1:4]
     arr_iata = chunks[-1][1:]
