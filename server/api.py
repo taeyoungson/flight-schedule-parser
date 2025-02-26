@@ -17,12 +17,6 @@ def health():
     return {"status": "ok"}
 
 
-@app.get("/jobs")
-def jobs():
-    instance.DefaultBackgroundScheduler.print_jobs()
-    return {"jobs": instance.DefaultBackgroundScheduler.get_jobs()}
-
-
 @app.post("/register/flight")
 def parse(req: dto.RegisterFlightRequest):
     parse_flight_ocr_result.build_flight_schedule(raw_ocr_result=req.raw_ocr_result, year=req.year, month=req.month)
