@@ -4,7 +4,7 @@ import fastapi
 import mangum
 import uvicorn
 
-from jobs import parse_schedule
+from jobs import parse_flight_ocr_result
 from server import dto
 
 app = fastapi.FastAPI()
@@ -16,9 +16,9 @@ def health():
     return {"status": "ok"}
 
 
-@app.post("/schedule")
-def parse(req: dto.ScheduleData):
-    parse_schedule.build_flight_schedule(req.result)
+@app.post("/register/flight")
+def parse(req: dto.RegisterFlightRequest):
+    parse_flight_ocr_result.build_flight_schedule(raw_ocr_result=req.raw_ocr_result, year=req.year, month=req.month)
 
 
 def main(opts: argparse.Namespace):
