@@ -8,7 +8,7 @@ from utils import times as time_utils
 
 
 def _check_if_flight_schedule(event) -> bool:
-    return len(event.summary) == 10 and "->" in event.summary
+    return len(event.summary) == 11 and "->" in event.summary
 
 
 def _parse_kwargs_from_event(event) -> dict[str, str]:
