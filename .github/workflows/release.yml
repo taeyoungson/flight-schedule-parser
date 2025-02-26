@@ -30,6 +30,8 @@ jobs:
               python3.11 -m pip install --upgrade pip && \
               python3.11 -m pip install -r requirements.txt -t python/ --only-binary=:all:"
           
+          cp -r python-packages/third_party python/third_party
+          
           zip -r aws-lambda-python-dependencies-v0.0.${{ github.run_number }}.zip python/
           rm requirements.txt
 
