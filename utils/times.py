@@ -9,7 +9,7 @@ class TimeZone(enum.Enum):
 
 
 def now() -> datetime.datetime:
-    return datetime.datetime.now()
+    return datetime.datetime.now(TimeZone.SEOUL.value)
 
 
 def hours_before(datetime_: datetime.datetime, hours: int) -> datetime.datetime:
@@ -25,7 +25,7 @@ def minutes_after(datetime_: datetime.datetime, minutes: int) -> datetime.dateti
 
 
 def get_today_as_date() -> datetime.date:
-    return datetime.date.today()
+    return now().date()
 
 
 def get_next_month(year: int, month: int) -> tuple[int, int]:

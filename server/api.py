@@ -1,4 +1,5 @@
 import argparse
+from loguru import logger
 
 import fastapi
 import mangum
@@ -15,6 +16,12 @@ handler = mangum.Mangum(app)
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/jobs")
+def jobs():
+    logger.info("Jobs: {instance.DefaultBackgroundScheduler.get_jobs()}")
+    return {"jobs": instance.DefaultBackgroundScheduler.get_jobs()}
 
 
 @app.post("/register/flight")
