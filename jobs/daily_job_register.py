@@ -70,7 +70,6 @@ def main():
             next_run_time=job.next_run_time,
         )
 
-    # kakaotalk.send_to_me(f"{time_utils.get_today_as_date()}\n총 {len(calendar_jobs)}개의 조회 일정을 등록해 두었어요.")
     kakaotalk.send_to_me(f"""
         {time_utils.get_today_as_date()} 일정 등록 완료
         ---
