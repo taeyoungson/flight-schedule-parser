@@ -102,9 +102,11 @@ ICN/LAX
 
 def test_parse_flight_schedule(mocker: pytest_mock.MockFixture):
     mock_kakaotalk = mocker.patch("third_party.kakao.client.send_to_me")
+    mock_google_calendar_config = mocker.patch("third_party.calendars.config.load_config")
     mock_google_calendar = mocker.patch("third_party.calendars.gcal.GoogleCalendar.create_event")
 
     parse_flight_ocr_result.build_flight_schedule(_FLIGHT_OCR_RESULT, year=2025, month=3)
 
     assert mock_kakaotalk.call_count == 1
+    assert mock_google_calendar_config.call_count == 1
     assert mock_google_calendar.call_count == 9

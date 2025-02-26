@@ -102,7 +102,7 @@ def build_flight_schedule(raw_ocr_result: str, year: int | None = None, month: i
             continue
 
     logger.info(f"Number of schedules: {num_schedules}")
-    calendar = gcal.GoogleCalendar()
+    calendar = gcal.load_google_calendar_client()
     for f in flights:
         logger.info(f"Departure: {f.departure_time}, Arrival: {f.arrival_time}")
         calendar.create_event(

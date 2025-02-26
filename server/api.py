@@ -4,6 +4,7 @@ import fastapi
 import mangum
 import uvicorn
 
+from scheduler import instance
 from jobs import parse_flight_ocr_result
 from server import dto
 
@@ -22,6 +23,7 @@ def parse(req: dto.RegisterFlightRequest):
 
 
 def main(opts: argparse.Namespace):
+    instance.DefaultBackgroundScheduler.start()
     uvicorn.run("server.api:app", host=opts.host, port=opts.port)
 
 

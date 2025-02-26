@@ -23,5 +23,5 @@ DefaultBackgroundScheduler = background.BackgroundScheduler(
 )
 
 
-DefaultBackgroundScheduler.add_job(_heartbeat, "interval", minutes=10)
+DefaultBackgroundScheduler.add_job(_heartbeat, "interval", seconds=10)
 DefaultBackgroundScheduler.add_listener(_crash_report, events.EVENT_JOB_ERROR)
