@@ -98,8 +98,6 @@ def build_flight_schedule(raw_ocr_result: str, year: int | None = None, month: i
                 )
             )
             num_schedules += 1
-        else:
-            continue
 
     logger.info(f"Number of schedules: {num_schedules}")
     calendar = gcal.load_google_calendar_client()
