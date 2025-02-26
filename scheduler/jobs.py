@@ -53,7 +53,7 @@ class BaseJob:
 
     @property
     def description(self) -> str:
-        return f"Function {self.id} with kwargs {self.kwargs}"
+        return f"Function {self.id} with kwargs {self.kwargs}, trigger {self.trigger} at {self.next_run_time}"
 
     @property
     def name(self) -> str:
