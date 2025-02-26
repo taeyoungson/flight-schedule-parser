@@ -21,8 +21,8 @@ def _parse_flight_match_to_airports(match: re.Match) -> tuple[str, str]:
     departure_airport = match.group(1)
     arrival_airport = match.group(2)
 
-    assert airport_utils.check_iata_code_exists(departure_airport), f"Invalid IATA code: {departure_airport}"
-    assert airport_utils.check_iata_code_exists(arrival_airport), f"Invalid IATA code: {arrival_airport}"
+    assert airport_utils.check_iata_code_exists(departure_airport), f"Invalid iata code: {departure_airport}"
+    assert airport_utils.check_iata_code_exists(arrival_airport), f"Invalid iata code: {arrival_airport}"
     return departure_airport, arrival_airport
 
 
@@ -120,9 +120,3 @@ def build_flight_schedule(raw_ocr_result: str, year: int | None = None, month: i
         Total flight time: {_get_total_flight_time(flights)}
         """
     )
-
-
-if __name__ == "__main__":
-    with open("./data/march.txt", "r", encoding="utf-8") as fp:
-        ocr_result = fp.read()
-    build_flight_schedule(ocr_result, year=2025, month=3)
