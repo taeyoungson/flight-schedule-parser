@@ -144,7 +144,7 @@ def main(
     )
     logger.info(f"Image URL: {img_url}")
 
-    discord.send_to_dev(
+    discord.send_to_weather(
         message=f"""
             조사일: **{arrival_time.strftime("%m월 %d일")}**
             지역: **{airport_utils.get_cityname_by_iata_code(arrive_airport)} 날씨 보고서**

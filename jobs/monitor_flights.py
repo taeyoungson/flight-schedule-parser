@@ -3,6 +3,7 @@ import zoneinfo
 
 from loguru import logger
 from third_party.aviationstack import request as aviation_request
+from third_party.discord import client as discord
 from third_party.kakao import client as kakaotalk
 
 from utils import times as time_utils
@@ -48,6 +49,19 @@ def main(dep_iata: str, arr_iata: str, airline: str = "asiana") -> None:
     kakaotalk.send_to_me(
         f"""
             비행편 {flight["flight"]["iata"]} 조회 결과
+            출발지: {flight["departure"]["airport"]}
+            도착지: {flight["arrival"]["airport"]}
+            출발 지연: 총 {departure_delay}분
+            도착 지연: 총 {arrival_delay}분
+            실제 출발: {time_utils.pretty_datetime(actual_departure)}
+            도착 예정: {time_utils.pretty_datetime(scheduled_arrival)}
+        """
+    )
+
+    discord.send_to_schedule(
+        f"""
+            {dep_iata} -> {arr_iata} ({airline})
+            **비행편 {flight["flight"]["iata"]} 조회 결과**
             출발지: {flight["departure"]["airport"]}
             도착지: {flight["arrival"]["airport"]}
             출발 지연: 총 {departure_delay}분
