@@ -17,7 +17,7 @@ from third_party.openweather import dto as openweather_dto
 from utils import airports as airport_utils
 from utils import times as time_utils
 
-mpl.rc("font", family="Noto Sans KR")
+mpl.rc("font", family="NanumGothic")
 
 
 def _get_weather_data_of_interests(
@@ -65,7 +65,7 @@ def _build_weather_report(
     ax1.text(
         arrival_time,
         ax1.get_ylim()[1] * 0.9,
-        "🛬",
+        "착륙",
         ha="center",
         va="top",
         fontsize=20,
@@ -78,13 +78,13 @@ def _build_weather_report(
     ax1.text(
         leaving_time,
         ax1.get_ylim()[1] * 0.9,
-        "🛫",
+        "이륙",
         ha="center",
         va="top",
         fontsize=20,
         color="#E30613",
         bbox=dict(facecolor="white", edgecolor="black", boxstyle="round,pad=0.3"),
-        fontproperties=fm.FontProperties(family="Segoe UI Emoji"),
+        # fontproperties=fm.FontProperties(family="Segoe UI Emoji"),
     )
 
     ax1.fill_between(dates, avg_temps, max_temps, color="red", alpha=0.1)
