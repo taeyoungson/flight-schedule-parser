@@ -57,6 +57,7 @@ _FLIGHT_SEARCH_RESULT = {
 
 def test_monitor_flights(mocker: pytest_mock.MockFixture):
     mock_kakaotalk = mocker.patch("third_party.kakao.client.send_to_me")
+    mock_discord = mocker.patch("third_party.discord.client.send_to_schedule")
     mock_filter_flights_of_interest = mocker.patch(
         "jobs.monitor_flights._filter_flights_of_interest", return_value=[_FLIGHT_SEARCH_RESULT]
     )
@@ -79,3 +80,4 @@ def test_monitor_flights(mocker: pytest_mock.MockFixture):
             도착 예정: 오후 03시 13분
         """
     )
+    mock_discord.call_count == 1
