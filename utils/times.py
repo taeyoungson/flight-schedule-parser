@@ -1,5 +1,5 @@
-import enum
 import datetime
+import enum
 import zoneinfo
 
 
@@ -14,6 +14,10 @@ def now() -> datetime.datetime:
 
 def hours_before(datetime_: datetime.datetime, hours: int) -> datetime.datetime:
     return datetime_ - datetime.timedelta(hours=hours)
+
+
+def hours_after(datetime_: datetime.datetime, hours: int) -> datetime.datetime:
+    return datetime_ + datetime.timedelta(hours=hours)
 
 
 def minutes_before(datetime_: datetime.datetime, minutes: int) -> datetime.datetime:
@@ -68,4 +72,8 @@ def pretty_datetime(datetime_: datetime.datetime) -> str:
 
 
 def to_timezone(datetime_: datetime.datetime, tzinfo: zoneinfo.ZoneInfo) -> datetime.datetime:
-    return datetime_.astimezone(tzinfo=tzinfo)
+    return datetime_.astimezone(tz=tzinfo)
+
+
+def is_between(datetime_: datetime.datetime, start: datetime.datetime, end: datetime.datetime) -> bool:
+    return start <= datetime_ and datetime_ <= end

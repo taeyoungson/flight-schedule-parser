@@ -1,9 +1,10 @@
-import enum
 import datetime
-import pydantic
+import enum
 import re
-from utils import airports as airpot_utils
 
+import pydantic
+
+from utils import airports as airpot_utils
 
 _DATE_PATTERN = re.compile(r".*([0-9]{2})\/?([0-9]{2}).*")
 _DATETIME_PATTERN = re.compile(r"([0-9]{2})\s?([0-9]{2}):?([0-9]{2})")
