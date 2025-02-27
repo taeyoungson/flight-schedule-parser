@@ -1,8 +1,23 @@
+import dataclasses
 import zoneinfo
 
 import airportsdata as apt
 
 _AIRPORTS = apt.load("IATA")
+
+
+@dataclasses.dataclass
+class Coord:
+    lat: float
+    lon: float
+
+
+def get_coord_by_iata_code(iata: str) -> Coord:
+    airport_data = _AIRPORTS[iata]
+    return Coord(
+        lat=float(airport_data["lat"]),
+        lon=float(airport_data["lon"]),
+    )
 
 
 def get_timezone_by_iata_code(iata: str) -> zoneinfo.ZoneInfo:
