@@ -12,6 +12,14 @@ def now() -> datetime.datetime:
     return datetime.datetime.now(TimeZone.SEOUL.value)
 
 
+def get_days_before(date: datetime.date, days: int) -> datetime.date:
+    return date - datetime.timedelta(days=days)
+
+
+def get_days_after(date: datetime.date, days: int) -> datetime.date:
+    return date + datetime.timedelta(days=days)
+
+
 def hours_before(datetime_: datetime.datetime, hours: int) -> datetime.datetime:
     return datetime_ - datetime.timedelta(hours=hours)
 

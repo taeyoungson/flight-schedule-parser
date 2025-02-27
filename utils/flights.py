@@ -49,6 +49,23 @@ class Flight(pydantic.BaseModel):
             return "🛬"
         return "🛫"
 
+    def __repr__(self) -> str:
+        return (
+            f"Flight({self.departure_airport} -> {self.arrival_airport}, {self.departure_time} - {self.arrival_time})"
+        )
+
+    @staticmethod
+    def parse_summary(summary: str) -> dict[str, str]:
+        chunks = summary.split("->")
+
+        dep_iata = chunks[-2][1:4]
+        arr_iata = chunks[-1][1:]
+
+        return {
+            "dep_iata": dep_iata,
+            "arr_iata": arr_iata,
+        }
+
 
 def match_flight_pattern(raw_string: str) -> re.Match:
     return _FLIGHT_PATTERN.match(raw_string)

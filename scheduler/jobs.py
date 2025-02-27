@@ -63,3 +63,7 @@ class BaseJob:
 
 class CalendarJob(BaseJob, TriggerMixin):
     pass
+
+
+class WeatherJob(BaseJob, TriggerMixin):
+    pass
