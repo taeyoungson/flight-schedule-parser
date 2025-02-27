@@ -16,7 +16,7 @@ from third_party.openweather import dto as openweather_dto
 from utils import airports as airport_utils
 from utils import times as time_utils
 
-mpl.rc("font", family="NanumGothic")
+mpl.rcParams["font.family"] = "NanumGothicCoding"
 
 
 def _get_weather_data_of_interests(
@@ -29,7 +29,7 @@ def _get_weather_data_of_interests(
 
 def _build_weather_report(
     weathers: list[openweather_dto.WeatherData],
-    arrive_airport: str,
+    arrival_airport: str,
     arrival_time: datetime.datetime,
     leaving_time: datetime.datetime,
     tz: zoneinfo.ZoneInfo,
@@ -70,7 +70,6 @@ def _build_weather_report(
         fontsize=10,
         color="#E30613",
         bbox=dict(facecolor="white", edgecolor="black", boxstyle="round,pad=0.3"),
-        # fontproperties=fm.FontProperties(family="Segoe UI Emoji"),
     )
 
     ax1.axvline(x=leaving_time, color="green", linestyle="--")
@@ -83,7 +82,6 @@ def _build_weather_report(
         fontsize=10,
         color="#E30613",
         bbox=dict(facecolor="white", edgecolor="black", boxstyle="round,pad=0.3"),
-        # fontproperties=fm.FontProperties(family="Segoe UI Emoji"),
     )
 
     ax1.fill_between(dates, avg_temps, max_temps, color="red", alpha=0.1)
@@ -98,12 +96,12 @@ def _build_weather_report(
     ax1.legend(loc="upper left")
     ax2.legend(loc="upper right")
 
-    plt.title(f"{arrive_airport} ({unique_dates[0]} - {unique_dates[-1]})", fontsize=15)
+    plt.title(f"{arrival_airport} ({unique_dates[0]} - {unique_dates[-1]})", fontsize=15)
 
 
 @watcher.report_error
 def main(
-    arrive_airport: str,
+    arrival_airport: str,
     arrival_time: datetime.datetime,
     leaving_time: datetime.datetime,
     margin_hours: int = 3,
@@ -112,42 +110,44 @@ def main(
     arrival_time - margin_hours to leaving_time + margin_hours and report to user.
 
     Args:
-        arrive_airport (str): The name of airport that user will arrive.
+        arrival_airport (str): The name of airport that user will arrive.
         arrival_time (datetime.datetime): The time that user will arrive.
         leaving_time (datetime.datetime): The time that user will leave.
         margin_hours (int, optional): The margin hours that user want to check. Defaults to 3.
     """
-    assert airport_utils.check_iata_code_exists(arrive_airport), f"Invalid airport code: {arrive_airport}"
+    assert airport_utils.check_iata_code_exists(arrival_airport), f"Invalid airport code: {arrival_airport}"
 
     margined_arrival_time = time_utils.hours_before(arrival_time, margin_hours)
     margined_leaving_time = time_utils.hours_after(leaving_time, margin_hours)
 
-    logger.info(f"Search for weather of {arrive_airport} from {margined_arrival_time} to {margined_leaving_time}")
+    logger.info(f"Search for weather of {arrival_airport} from {margined_arrival_time} to {margined_leaving_time}")
 
-    coordinate = airport_utils.get_coord_by_iata_code(arrive_airport)
+    coordinate = airport_utils.get_coord_by_iata_code(arrival_airport)
     weathers = openweather.get_weather_by_coord(lat=coordinate.lat, lon=coordinate.lon)
     weathers_filtered = _get_weather_data_of_interests(weathers, margined_arrival_time, margined_leaving_time)
 
     _build_weather_report(
         weathers_filtered,
-        arrive_airport,
+        arrival_airport,
         arrival_time,
         leaving_time,
-        airport_utils.get_timezone_by_iata_code(arrive_airport),
+        airport_utils.get_timezone_by_iata_code(arrival_airport),
     )
 
     with tempfile.NamedTemporaryFile(suffix=".png") as f:
         plt.savefig(f.name)
         img_url = imgbb.upload_image(f.name)
     logger.info(
-        f"Generated weather report for {arrive_airport} from {margined_arrival_time} to {margined_leaving_time}"
+        f"Generated weather report for {arrival_airport} from {margined_arrival_time} to {margined_leaving_time}"
     )
     logger.info(f"Image URL: {img_url}")
 
+    arrival_time = time_utils.to_timezone(arrival_time, zoneinfo.ZoneInfo("Asia/Seoul"))
+    leaving_time = time_utils.to_timezone(leaving_time, zoneinfo.ZoneInfo("Asia/Seoul"))
     discord.send_to_weather(
         message=f"""
             조사일: **{arrival_time.strftime("%m월 %d일")}**
-            지역: **{airport_utils.get_cityname_by_iata_code(arrive_airport)} 날씨 보고서**
+            지역: **{airport_utils.get_cityname_by_iata_code(arrival_airport)} 날씨 보고서**
             대상 시간: **{arrival_time.strftime("%m월 %d일 %H시")} ~ {leaving_time.strftime("%m월 %d일 %H시")}**
         """,
         image_url=img_url,

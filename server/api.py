@@ -1,7 +1,6 @@
 import argparse
 
 import fastapi
-import mangum
 import uvicorn
 
 from jobs import parse_flight_ocr_result
@@ -9,7 +8,6 @@ from scheduler import instance
 from server import dto
 
 app = fastapi.FastAPI()
-handler = mangum.Mangum(app)
 
 
 @app.get("/health")

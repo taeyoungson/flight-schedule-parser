@@ -99,7 +99,7 @@ def main():
                 leaving_time=rt_flight_event.departure_time,
             ).add_ctx(
                 trigger=jobs.TriggerType.DATE,
-                next_run_time=time_utils.minutes_after(time_utils.now(), 5),
+                next_run_time=time_utils.minutes_after(time_utils.now(), 1),
             )
         )
         summaries.append(f"- {flight_event.summary()}")
