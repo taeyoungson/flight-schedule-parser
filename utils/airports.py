@@ -30,3 +30,7 @@ def get_airport_name_by_iata_code(iata: str) -> str:
 
 def check_iata_code_exists(iata_code: str) -> bool:
     return iata_code in _AIRPORTS
+
+
+def get_cityname_by_iata_code(iata_code: str) -> str:
+    return _AIRPORTS[iata_code].get("city")
