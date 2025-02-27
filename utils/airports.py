@@ -1,4 +1,5 @@
 import zoneinfo
+
 import airportsdata as apt
 
 _AIRPORTS = apt.load("IATA")

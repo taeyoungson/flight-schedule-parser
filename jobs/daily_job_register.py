@@ -1,9 +1,10 @@
 from loguru import logger
+from third_party.calendars import gcal
+from third_party.kakao import client as kakaotalk
+
 from jobs import monitor_flights
 from scheduler import instance
 from scheduler import jobs
-from third_party.calendars import gcal
-from third_party.kakao import client as kakaotalk
 from utils import times as time_utils
 
 

@@ -1,4 +1,5 @@
 import pytest_mock
+
 from jobs import monitor_flights
 
 _FLIGHT_SEARCH_RESULT = {

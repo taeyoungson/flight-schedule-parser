@@ -1,12 +1,14 @@
+import datetime
 import re
 import zoneinfo
-import datetime
+
 from loguru import logger
-from utils import flights as flight_utils
-from utils import airports as airport_utils
+from third_party.calendars import gcal
 from third_party.kakao import client as kakaotalk
 from third_party.kakao import watcher
-from third_party.calendars import gcal
+
+from utils import airports as airport_utils
+from utils import flights as flight_utils
 
 
 def _preprocess_raw_string(raw_string: str) -> list[str]:

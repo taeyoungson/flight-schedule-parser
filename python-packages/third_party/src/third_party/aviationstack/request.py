@@ -1,8 +1,9 @@
 import enum
-import requests
-from . import config as aviation_stock_config
-from . import airlines
 
+import requests
+
+from . import airlines
+from . import config as aviation_stack_config
 
 _FLIGHTS = "https://api.aviationstack.com/v1/flights"
 _TIMEOUT = 10
@@ -18,7 +19,7 @@ class FlightStatus(enum.Enum):
 
 
 def get_live_flights(dep_iata: str, arr_iata: str, airline: str = "asiana") -> list[dict[str, str]]:
-    config = aviation_stock_config.load_config()
+    config = aviation_stack_config.load_config()
     airline_info = airlines.get_airline_info(airline)
 
     try:

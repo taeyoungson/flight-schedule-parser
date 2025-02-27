@@ -1,4 +1,5 @@
 import pytest_mock
+
 from jobs import parse_flight_ocr_result
 
 _FLIGHT_OCR_RESULT = """
