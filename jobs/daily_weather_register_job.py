@@ -94,7 +94,7 @@ def main():
         weather_jobs.append(
             jobs.WeatherJob(
                 func=monitor_weather.main,
-                arrival_airpot=arr_iata,
+                arrival_airport=arr_iata,
                 arrival_time=flight_event.arrival_time,
                 leaving_time=rt_flight_event.departure_time,
             ).add_ctx(

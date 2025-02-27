@@ -6,7 +6,6 @@ from loguru import logger
 from matplotlib import dates as mdates
 from matplotlib import pyplot as plt
 import matplotlib as mpl
-import matplotlib.font_manager as fm
 import seaborn as sns
 from third_party.discord import client as discord
 from third_party.imgbb import client as imgbb
@@ -68,10 +67,10 @@ def _build_weather_report(
         "착륙",
         ha="center",
         va="top",
-        fontsize=20,
+        fontsize=10,
         color="#E30613",
         bbox=dict(facecolor="white", edgecolor="black", boxstyle="round,pad=0.3"),
-        fontproperties=fm.FontProperties(family="Segoe UI Emoji"),
+        # fontproperties=fm.FontProperties(family="Segoe UI Emoji"),
     )
 
     ax1.axvline(x=leaving_time, color="green", linestyle="--")
@@ -81,7 +80,7 @@ def _build_weather_report(
         "이륙",
         ha="center",
         va="top",
-        fontsize=20,
+        fontsize=10,
         color="#E30613",
         bbox=dict(facecolor="white", edgecolor="black", boxstyle="round,pad=0.3"),
         # fontproperties=fm.FontProperties(family="Segoe UI Emoji"),
