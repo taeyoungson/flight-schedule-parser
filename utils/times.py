@@ -92,5 +92,9 @@ def to_timezone(datetime_: datetime.datetime, tzinfo: zoneinfo.ZoneInfo) -> date
     return datetime_.astimezone(tz=tzinfo)
 
 
-def is_between(datetime_: datetime.datetime, start: datetime.datetime, end: datetime.datetime) -> bool:
+def is_datetime_between(datetime_: datetime.datetime, start: datetime.datetime, end: datetime.datetime) -> bool:
     return start <= datetime_ and datetime_ <= end
+
+
+def is_date_between(date: datetime.date, start: datetime.date, end: datetime.date) -> bool:
+    return start <= date and date <= end

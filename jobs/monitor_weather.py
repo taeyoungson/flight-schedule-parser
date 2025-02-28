@@ -16,7 +16,9 @@ def _get_weather_data_of_interests(
     arrival_time: datetime.datetime,
     leaving_time: datetime.datetime,
 ) -> list[openweather_dto.WeatherData]:
-    return list(filter(lambda w: time_utils.is_between(w.dt, arrival_time, leaving_time), weathers))
+    return list(
+        filter(lambda w: time_utils.is_date_between(w.dt.date(), arrival_time.date(), leaving_time.date()), weathers)
+    )
 
 
 def _get_weather_emoji(weather_main: str) -> str:
