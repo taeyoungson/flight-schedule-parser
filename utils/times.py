@@ -8,6 +8,15 @@ class TimeZone(enum.Enum):
     UTC = zoneinfo.ZoneInfo("UTC")
 
 
+class DateTimeFormatter(enum.Enum):
+    DATE = "%Y-%m-%d"
+    COMPACTDATE = "%m/%d"
+    COMPACTDATE_KR = "%m월 %d일"
+
+    def format(self, datetime_: datetime.datetime) -> str:
+        return datetime_.strftime(self.value)
+
+
 def now() -> datetime.datetime:
     return datetime.datetime.now(TimeZone.SEOUL.value)
 

@@ -4,7 +4,8 @@ import zoneinfo
 from loguru import logger
 from third_party.aviationstack import request as aviation_request
 from third_party.discord import client as discord
-from third_party.kakao import client as kakaotalk
+from third_party.discord import settings as discord_settings
+from third_party.kakao import watcher
 
 from utils import times as time_utils
 
@@ -24,6 +25,7 @@ def _parse_and_convert_to_kst(datetime_str: str, tz: str) -> datetime.datetime:
     return dt.astimezone(time_utils.TimeZone.SEOUL.value)
 
 
+@watcher.report_error
 def main(dep_iata: str, arr_iata: str, airline: str = "asiana") -> None:
     logger.debug(f"Monitor Flights: {dep_iata} -> {arr_iata} ({airline})")
     flights = aviation_request.get_live_flights(
@@ -46,27 +48,17 @@ def main(dep_iata: str, arr_iata: str, airline: str = "asiana") -> None:
     scheduled_arrival = _parse_and_convert_to_kst(flight["arrival"]["scheduled"], flight["arrival"]["timezone"])
     scheduled_arrival = time_utils.minutes_after(scheduled_arrival, arrival_delay)
 
-    kakaotalk.send_to_me(
-        f"""
-            비행편 {flight["flight"]["iata"]} 조회 결과
-            출발지: {flight["departure"]["airport"]}
-            도착지: {flight["arrival"]["airport"]}
-            출발 지연: 총 {departure_delay}분
-            도착 지연: 총 {arrival_delay}분
-            실제 출발: {time_utils.pretty_datetime(actual_departure)}
-            도착 예정: {time_utils.pretty_datetime(scheduled_arrival)}
-        """
+    discord.send_to_dev(
+        f"<@{discord_settings.ME}>님!\n" + f"향공편 {flight['flight']['iata']}편을 조회했어요.\n" + "```\n"
+        f"출발지: {flight['departure']['airport']}\n"
+        + f"도착지: {flight['arrival']['airport']}\n"
+        + f"출발 지연: 총 {departure_delay}분\n"
+        + f"도착 지연: 총 {arrival_delay}분\n"
+        + f"실제 출발: {time_utils.pretty_datetime(actual_departure)}\n"
+        + f"도착 예정: {time_utils.pretty_datetime(scheduled_arrival)}\n"
+        "```"
     )
 
-    discord.send_to_schedule(
-        f"""
-            {dep_iata} -> {arr_iata} ({airline})
-            **비행편 {flight["flight"]["iata"]} 조회 결과**
-            출발지: {flight["departure"]["airport"]}
-            도착지: {flight["arrival"]["airport"]}
-            출발 지연: 총 {departure_delay}분
-            도착 지연: 총 {arrival_delay}분
-            실제 출발: {time_utils.pretty_datetime(actual_departure)}
-            도착 예정: {time_utils.pretty_datetime(scheduled_arrival)}
-        """
-    )
+
+if __name__ == "__main__":
+    main("GMP", "CJU")

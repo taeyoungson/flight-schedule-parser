@@ -7,10 +7,8 @@ import zoneinfo
 
 @dataclasses.dataclass
 class Temperature:
-    avg: float
     max: float
     min: float
-    feels_like: float
 
 
 @dataclasses.dataclass
@@ -33,35 +31,33 @@ class Weather:
 @dataclasses.dataclass
 class WeatherData:
     dt: datetime.datetime
-    temperature: Temperature
-    weathers: list[Weather]
+    temp: Temperature
+    weather: list[Weather]
     humidity: float
-    rain_3h: float
-    snow_3h: float
+    rain: float
+    snow: float
+    uvi: float
 
     @classmethod
-    def from_response(cls, response: dict) -> WeatherData:
-        rain_3h = 0
-        snow_3h = 0
+    def from_response(cls, daily_response: dict) -> WeatherData:
+        rain = 0
+        snow = 0
 
-        if "rain" in response:
-            rain_3h = float(response["rain"]["3h"])
+        if "rain" in daily_response:
+            rain = float(daily_response["rain"])
 
-        if "snow" in response:
-            snow_3h = float(response["snow"]["3h"])
+        if "snow" in daily_response:
+            snow = float(daily_response["snow"])
 
         return WeatherData(
-            dt=datetime.datetime.strptime(response["dt_txt"], "%Y-%m-%d %H:%M:%S").replace(
-                tzinfo=zoneinfo.ZoneInfo("UTC")
+            dt=datetime.datetime.fromtimestamp(daily_response["dt"]).replace(tzinfo=zoneinfo.ZoneInfo("UTC")),
+            temp=Temperature(
+                min=daily_response["temp"]["min"],
+                max=daily_response["temp"]["max"],
             ),
-            temperature=Temperature(
-                avg=response["main"]["temp"],
-                min=response["main"]["temp_min"],
-                max=response["main"]["temp_max"],
-                feels_like=response["main"]["feels_like"],
-            ),
-            weathers=[Weather.from_dict(w) for w in response["weather"]],
-            humidity=response["main"]["humidity"],
-            rain_3h=rain_3h,
-            snow_3h=snow_3h,
+            weather=[Weather.from_dict(w) for w in daily_response["weather"]],
+            humidity=daily_response["humidity"],
+            uvi=daily_response["uvi"],
+            rain=rain,
+            snow=snow,
         )

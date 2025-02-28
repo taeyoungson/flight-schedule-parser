@@ -5,11 +5,14 @@ from requests import exceptions
 from . import config as openweather_config
 from . import dto
 
-_URL = "https://api.openweathermap.org/data/2.5/forecast"
+_URL = "https://api.openweathermap.org/data/3.0/onecall"
 
 
-def get_weather_by_coord(
-    lat: float, lon: float, units: str = "metric", mode: str = "json", cnt: int = 40
+def get_daily_weather(
+    lat: float,
+    lon: float,
+    units: str = "metric",
+    exclude: str = "current,minutely,hourly",
 ) -> list[dto.WeatherData]:
     config = openweather_config.load_config()
 
@@ -20,16 +23,17 @@ def get_weather_by_coord(
                 "lat": lat,
                 "lon": lon,
                 "appid": config.api_key,
-                "mode": mode,
                 "units": units,
-                "cnt": cnt,
+                "exclude": exclude,
             },
         )
         response.raise_for_status()
+        daily_response = response.json()["daily"]
 
         weathers = []
-        for w in response.json()["list"]:
-            weathers.append(dto.WeatherData.from_response(w))
+        for daily in daily_response:
+            weathers.append(dto.WeatherData.from_response(daily))
+
         return weathers
 
     except exceptions.HTTPError as errh:
