@@ -1,5 +1,4 @@
 import datetime
-import zoneinfo
 
 from loguru import logger
 from third_party.discord import client as discord
@@ -88,12 +87,4 @@ def main(
             + f"{summary}"
             + "```"
         )
-    )
-
-
-if __name__ == "__main__":
-    main(
-        "LHR",
-        datetime.datetime(2025, 3, 2, 12, 25, tzinfo=zoneinfo.ZoneInfo("Asia/Seoul")),
-        datetime.datetime(2025, 3, 4, 5, 10, tzinfo=zoneinfo.ZoneInfo("Asia/Seoul")),
     )

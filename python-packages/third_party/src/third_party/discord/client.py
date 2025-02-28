@@ -61,11 +61,11 @@ def send_to_weather(message: str, image_url: str | None = None) -> None:
         raise RuntimeError(f"Failed to send message to dev: {e}") from e
 
 
-def send_to_schedule(message: str, image_url: str | None = None) -> None:
+def send_to_flight(message: str, image_url: str | None = None) -> None:
     config = discord_config.load_config()
     embeds = []
 
-    if not config.schedule_webhook:
+    if not config.flight_webhook:
         logger.warning("discord schedule__webhook is not set. Skip sending message to dev.")
         return
 

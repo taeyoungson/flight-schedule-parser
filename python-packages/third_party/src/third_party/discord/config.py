@@ -4,7 +4,7 @@ import pydantic_settings
 
 class Config(pydantic_settings.BaseSettings):
     dev_webhook: str | None = pydantic.Field(None)
-    schedule_webhook: str | None = pydantic.Field(None)
+    flight_webhook: str | None = pydantic.Field(None)
     weather_webhook: str | None = pydantic.Field(None)
 
     model_config = pydantic_settings.SettingsConfigDict(

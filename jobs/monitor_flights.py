@@ -48,7 +48,7 @@ def main(dep_iata: str, arr_iata: str, airline: str = "asiana") -> None:
     scheduled_arrival = _parse_and_convert_to_kst(flight["arrival"]["scheduled"], flight["arrival"]["timezone"])
     scheduled_arrival = time_utils.minutes_after(scheduled_arrival, arrival_delay)
 
-    discord.send_to_dev(
+    discord.send_to_flight(
         f"<@{discord_settings.ME}>님!\n" + f"향공편 {flight['flight']['iata']}편을 조회했어요.\n" + "```\n"
         f"출발지: {flight['departure']['airport']}\n"
         + f"도착지: {flight['arrival']['airport']}\n"
@@ -58,7 +58,3 @@ def main(dep_iata: str, arr_iata: str, airline: str = "asiana") -> None:
         + f"도착 예정: {time_utils.pretty_datetime(scheduled_arrival)}\n"
         "```"
     )
-
-
-if __name__ == "__main__":
-    main("GMP", "CJU")
