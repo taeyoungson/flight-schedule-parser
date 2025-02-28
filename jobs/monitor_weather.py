@@ -1,22 +1,14 @@
 import datetime
-import tempfile
-import zoneinfo
 
 from loguru import logger
-from matplotlib import dates as mdates
-from matplotlib import pyplot as plt
-import matplotlib as mpl
-import seaborn as sns
 from third_party.discord import client as discord
-from third_party.imgbb import client as imgbb
+from third_party.discord import settings as discord_settings
 from third_party.kakao import watcher
 from third_party.openweather import client as openweather
 from third_party.openweather import dto as openweather_dto
 
 from utils import airports as airport_utils
 from utils import times as time_utils
-
-mpl.rcParams["font.family"] = "NanumGothicCoding"
 
 
 def _get_weather_data_of_interests(
@@ -27,76 +19,18 @@ def _get_weather_data_of_interests(
     return list(filter(lambda w: time_utils.is_between(w.dt, arrival_time, leaving_time), weathers))
 
 
-def _build_weather_report(
-    weathers: list[openweather_dto.WeatherData],
-    arrival_airport: str,
-    arrival_time: datetime.datetime,
-    leaving_time: datetime.datetime,
-    tz: zoneinfo.ZoneInfo,
-) -> None:
-    dates = []
-    avg_temps = []
-    max_temps = []
-    min_temps = []
-    rains = []
-    snows = []
-    for w in weathers:
-        dates.append(time_utils.to_timezone(w.dt, tz))
-        avg_temps.append(w.temperature.avg)
-        max_temps.append(w.temperature.max)
-        min_temps.append(w.temperature.min)
-        rains.append(w.rain_3h)
-        snows.append(w.snow_3h)
-
-    fig, ax1 = plt.subplots(figsize=(12, 6))
-
-    unique_dates = sorted(list(set([d.date() for d in dates])))
-    for date in unique_dates:
-        ax1.axvline(x=date, color="gray", linestyle="--", alpha=0.2)
-
-    sns.lineplot(x=dates, y=max_temps, label="최고 기온", color="red", linestyle="dashed", ax=ax1)
-    sns.lineplot(x=dates, y=min_temps, label="최저 기온", color="blue", linestyle="dashed", ax=ax1)
-    sns.lineplot(x=dates, y=avg_temps, label="평균 기온", color="black", linewidth=2, ax=ax1)
-
-    ax1.xaxis.set_major_formatter(mdates.DateFormatter("%d일 %H시"))
-
-    ax1.axvline(x=arrival_time, color="green", linestyle="--")
-    ax1.text(
-        arrival_time,
-        ax1.get_ylim()[1] * 0.9,
-        "착륙",
-        ha="center",
-        va="top",
-        fontsize=10,
-        color="#E30613",
-        bbox=dict(facecolor="white", edgecolor="black", boxstyle="round,pad=0.3"),
-    )
-
-    ax1.axvline(x=leaving_time, color="green", linestyle="--")
-    ax1.text(
-        leaving_time,
-        ax1.get_ylim()[1] * 0.9,
-        "이륙",
-        ha="center",
-        va="top",
-        fontsize=10,
-        color="#E30613",
-        bbox=dict(facecolor="white", edgecolor="black", boxstyle="round,pad=0.3"),
-    )
-
-    ax1.fill_between(dates, avg_temps, max_temps, color="red", alpha=0.1)
-    ax1.fill_between(dates, min_temps, avg_temps, color="blue", alpha=0.1)
-
-    ax2 = ax1.twinx()
-    ax2.bar(dates, rains, color="blue", alpha=0.6, width=0.05, label="강수량 (mm)")
-    ax2.set_ylabel("강수량 (mm)", color="black")
-    ax2.tick_params(axis="y", labelcolor="black")
-    ax2.set_ylim(0, 20)
-
-    ax1.legend(loc="upper left")
-    ax2.legend(loc="upper right")
-
-    plt.title(f"{arrival_airport} ({unique_dates[0]} - {unique_dates[-1]})", fontsize=15)
+def _get_weather_emoji(weather_main: str) -> str:
+    if weather_main == "Clear":
+        return "☀️"
+    if weather_main == "Clouds":
+        return "☁️"
+    if weather_main == "Rain":
+        return "🌧️"
+    if weather_main == "Snow":
+        return "❄️"
+    if weather_main == "Wind":
+        return "🌬️"
+    return "❓"
 
 
 @watcher.report_error
@@ -116,6 +50,10 @@ def main(
         margin_hours (int, optional): The margin hours that user want to check. Defaults to 3.
     """
     assert airport_utils.check_iata_code_exists(arrival_airport), f"Invalid airport code: {arrival_airport}"
+    arrival_timezone = airport_utils.get_timezone_by_iata_code(arrival_airport)
+
+    arrival_time = time_utils.to_timezone(arrival_time, arrival_timezone)
+    leaving_time = time_utils.to_timezone(leaving_time, arrival_timezone)
 
     margined_arrival_time = time_utils.hours_before(arrival_time, margin_hours)
     margined_leaving_time = time_utils.hours_after(leaving_time, margin_hours)
@@ -123,32 +61,30 @@ def main(
     logger.info(f"Search for weather of {arrival_airport} from {margined_arrival_time} to {margined_leaving_time}")
 
     coordinate = airport_utils.get_coord_by_iata_code(arrival_airport)
-    weathers = openweather.get_weather_by_coord(lat=coordinate.lat, lon=coordinate.lon)
+    weathers = openweather.get_daily_weather(lat=coordinate.lat, lon=coordinate.lon)
     weathers_filtered = _get_weather_data_of_interests(weathers, margined_arrival_time, margined_leaving_time)
 
-    _build_weather_report(
-        weathers_filtered,
-        arrival_airport,
-        arrival_time,
-        leaving_time,
-        airport_utils.get_timezone_by_iata_code(arrival_airport),
-    )
+    notices = []
+    for w in weathers_filtered:
+        local_datetime = time_utils.to_timezone(w.dt, arrival_timezone)
+        max_temp = int(w.temp.max)
+        min_temp = int(w.temp.min)
+        weather_main = w.weather[0].main
 
-    with tempfile.NamedTemporaryFile(suffix=".png") as f:
-        plt.savefig(f.name)
-        img_url = imgbb.upload_image(f.name)
+        notices.append(
+            f"{time_utils.DateTimeFormatter.COMPACTDATE_KR.format(local_datetime)}: {_get_weather_emoji(weather_main)} ↓{min_temp:02d}℃ / ↑{max_temp:02d}℃"
+        )
+
     logger.info(
         f"Generated weather report for {arrival_airport} from {margined_arrival_time} to {margined_leaving_time}"
     )
-    logger.info(f"Image URL: {img_url}")
-
-    arrival_time = time_utils.to_timezone(arrival_time, zoneinfo.ZoneInfo("Asia/Seoul"))
-    leaving_time = time_utils.to_timezone(leaving_time, zoneinfo.ZoneInfo("Asia/Seoul"))
+    summary = "\n".join(notices)
     discord.send_to_weather(
-        message=f"""
-            조사일: **{arrival_time.strftime("%m월 %d일")}**
-            지역: **{airport_utils.get_cityname_by_iata_code(arrival_airport)} 날씨 보고서**
-            대상 시간: **{arrival_time.strftime("%m월 %d일 %H시")} ~ {leaving_time.strftime("%m월 %d일 %H시")}**
-        """,
-        image_url=img_url,
+        message=(
+            f"<@{discord_settings.ARIES_PIG}>님!\n"
+            + f"**{time_utils.DateTimeFormatter.COMPACTDATE_KR.format(arrival_time)}**부터 **{time_utils.DateTimeFormatter.COMPACTDATE_KR.format(leaving_time)}**까지 **{airport_utils.get_cityname_by_iata_code(arrival_airport)}** 날씨 보고서를 가져왔어요🌡️\n"
+            + "```\n"
+            + f"{summary}"
+            + "```"
+        )
     )

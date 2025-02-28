@@ -56,8 +56,7 @@ _FLIGHT_SEARCH_RESULT = {
 
 
 def test_monitor_flights(mocker: pytest_mock.MockFixture):
-    mock_kakaotalk = mocker.patch("third_party.kakao.client.send_to_me")
-    mock_discord = mocker.patch("third_party.discord.client.send_to_schedule")
+    mock_discord = mocker.patch("third_party.discord.client.send_to_flight")
     mock_filter_flights_of_interest = mocker.patch(
         "jobs.monitor_flights._filter_flights_of_interest", return_value=[_FLIGHT_SEARCH_RESULT]
     )
@@ -69,15 +68,4 @@ def test_monitor_flights(mocker: pytest_mock.MockFixture):
 
     mock_filter_flights_of_interest.assert_called_once_with([_FLIGHT_SEARCH_RESULT])
     mock_aviation_request.assert_called_once_with(dep_iata="ICN", arr_iata="NRT", airline="asiana")
-    mock_kakaotalk.assert_called_once_with(
-        """
-            비행편 OZ104 조회 결과
-            출발지: Seoul (Incheon)
-            도착지: Narita International Airport
-            출발 지연: 총 42분
-            도착 지연: 총 18분
-            실제 출발: 오후 01시 21분
-            도착 예정: 오후 03시 13분
-        """
-    )
     mock_discord.call_count == 1

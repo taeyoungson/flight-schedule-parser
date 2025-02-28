@@ -12,14 +12,10 @@ from utils import times as time_utils
 _SEARCH_WINDOW = 7
 
 
-def _check_if_flight_schedule(event) -> bool:
-    return len(event.summary) == 11 and "->" in event.summary
-
-
 def _filter_events_of_interest(events: list) -> list:
     events_of_interests = []
     for e in events:
-        if not _check_if_flight_schedule(e):
+        if not flight_utils.Flight.parse_summary(e.summary):
             continue
 
         chunks = e.summary.split("->")
@@ -42,7 +38,7 @@ def _search_return_flight_schedule(
     logger.info(f"Searching return flight schedule for {flight}")
 
     for event in all_events:
-        if not _check_if_flight_schedule(event):
+        if not flight_utils.Flight.parse_summary(event.summary):
             continue
 
         dep_iata, arr_iata = flight_utils.Flight.parse_summary(event.summary).values()
