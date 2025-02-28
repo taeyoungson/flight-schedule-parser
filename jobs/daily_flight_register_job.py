@@ -28,7 +28,7 @@ def _summarize_calendar_jobs(calendar_jobs: list[jobs.CalendarJob]) -> str:
     return "\n".join([f"{job.description}" for job in calendar_jobs])
 
 
-@instance.DefaultBackgroundScheduler.scheduled_job(jobs.TriggerType.CRON, hour=0, minute=10)
+@instance.DefaultBackgroundScheduler.scheduled_job(jobs.TriggerType.CRON, hour=0, minute=5)
 def main():
     logger.debug("Registering daily jobs...")
 
