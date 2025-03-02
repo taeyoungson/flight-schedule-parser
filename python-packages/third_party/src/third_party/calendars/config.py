@@ -14,7 +14,7 @@ class GoogleSettings(pydantic_settings.BaseSettings):
 
     model_config = pydantic_settings.SettingsConfigDict(
         env_prefix="GOOGLE_",
-        env_file=".env.dev",
+        env_file=[".env", ".env.dev", "env.google"],
         extra="allow",
     )
 

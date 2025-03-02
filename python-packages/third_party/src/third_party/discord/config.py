@@ -9,7 +9,7 @@ class Config(pydantic_settings.BaseSettings):
 
     model_config = pydantic_settings.SettingsConfigDict(
         env_prefix="DISCORD_",
-        env_file=[".env", ".env.dev", ".env.imgbb"],
+        env_file=[".env", ".env.dev", ".env.discord"],
         extra="allow",
     )
 
