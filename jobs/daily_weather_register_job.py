@@ -76,6 +76,11 @@ def main():
     )
 
     weather_events = _filter_events_of_interest(events)
+    if not weather_events:
+        logger.info(f"No flight schedule found {today}")
+        kakaotalk.send_to_me(f"{today}\n예정된 날씨 모니터링 대상이 없습니다!")
+        return
+
     logger.info(f"Events of interest: {weather_events}")
     weather_jobs = []
     summaries = []
