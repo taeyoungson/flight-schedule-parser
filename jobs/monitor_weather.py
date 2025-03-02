@@ -7,6 +7,7 @@ from third_party.kakao import watcher
 from third_party.openweather import client as openweather
 from third_party.openweather import dto as openweather_dto
 
+from models import weather_bot
 from utils import airports as airport_utils
 from utils import times as time_utils
 
@@ -80,13 +81,21 @@ def main(
     logger.info(
         f"Generated weather report for {arrival_airport} from {margined_arrival_time} to {margined_leaving_time}"
     )
+
     summary = "\n".join(notices)
+
+    # generate ai response
+    bot = weather_bot.load_weather_bot()
+    ai_response = bot.invoke(summary).content
+
     discord.send_to_weather(
         message=(
             f"<@{discord_settings.ARIES_PIG}>님!\n"
             + f"**{time_utils.DateTimeFormatter.COMPACTDATE_KR.format(arrival_time)}**부터 **{time_utils.DateTimeFormatter.COMPACTDATE_KR.format(leaving_time)}**까지 **{airport_utils.get_cityname_by_iata_code(arrival_airport)}** 날씨 보고서를 가져왔어요🌡️\n"
             + "```\n"
             + f"{summary}"
-            + "```"
+            + "```\n"
+            + "## 🤖 AI 추천:\n"
+            + f"{ai_response}"
         )
     )
