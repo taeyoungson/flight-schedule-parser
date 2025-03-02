@@ -6,11 +6,8 @@ COPY . /app
 # Set the working directory
 WORKDIR /app
 
-# Install uv
+# Install uv and sync
 RUN python -m pip install uv
+RUN uv sync
 
-RUN uv export --no-hashes --format requirements-txt > requirements.txt
-
-RUN python -m pip install --no-cache-dir -r requirements.txt
-
-ENTRYPOINT ["python", "-m", "cron"]
+ENTRYPOINT [""]

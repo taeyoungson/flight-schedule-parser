@@ -8,7 +8,7 @@ _SYSTEM_PROMPT = """
      Instruction:
      - Given multiple lines of weather data in the format of
      f"{date}: {weather emoji} ↓{lowest}℃ / ↑{highest}℃",
-     Recommend appropriate clothing in detail so that she is neither cold nor hot.
+     Recommend appropriate clothing in detail that is neither cold nor hot.
 
      Must Follow:
      - Use Korean.
