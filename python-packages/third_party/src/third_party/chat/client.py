@@ -10,7 +10,7 @@ from . import models as llm_models
 
 class BaseChatClient(abc.ABC):
     _system_prompt: str
-    _model_provider: str = llm_models.Provider.OPENAI
+    _model_provider: str
 
     @property
     def system_prompt(self) -> str:
