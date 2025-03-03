@@ -60,7 +60,7 @@ def main(
     scheduled_departure = time_utils.minutes_after(scheduled_departure, departure_delay)
     scheduled_arrival = time_utils.minutes_after(scheduled_arrival, arrival_delay)
 
-    discord.send_to_dev(
+    discord.send_to_flight(
         f"<@{discord_settings.ME}>님!\n"
         + f"향공편 {flight_found['flight']['iata']}편을 조회했어요.\n"
         + f"**조회 날짜: {time_utils.get_today_as_date()}**\n"
