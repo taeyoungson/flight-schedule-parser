@@ -5,23 +5,12 @@ from third_party.kakao import client as kakaotalk
 from jobs import monitor_flights
 from scheduler import instance
 from scheduler import jobs
+from utils import flights as flight_utils
 from utils import times as time_utils
 
 
 def _check_if_flight_schedule(event) -> bool:
     return len(event.summary) == 11 and "->" in event.summary
-
-
-def _parse_kwargs_from_event(event) -> dict[str, str]:
-    chunks = event.summary.split("->")
-
-    dep_iata = chunks[-2][1:4]
-    arr_iata = chunks[-1][1:]
-
-    return {
-        "dep_iata": dep_iata,
-        "arr_iata": arr_iata,
-    }
 
 
 def _summarize_calendar_jobs(calendar_jobs: list[jobs.CalendarJob]) -> str:
@@ -52,7 +41,9 @@ def main():
         calendar_jobs.append(
             jobs.CalendarJob(
                 func=monitor_flights.main,
-                **_parse_kwargs_from_event(event),
+                flight_start=event.start,
+                flight_end=event.end,
+                **flight_utils.Flight.parse_summary(event.summary),
             ).add_ctx(
                 trigger=jobs.TriggerType.DATE,
                 next_run_time=time_utils.minutes_before(event.end, minutes=20),

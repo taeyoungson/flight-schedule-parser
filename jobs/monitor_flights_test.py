@@ -1,6 +1,10 @@
+import datetime
+
 import pytest_mock
 
 from jobs import monitor_flights
+from utils import airports as airport_utils
+from utils import times as time_utils
 
 _FLIGHT_SEARCH_RESULT = {
     "flight_date": "2025-02-23",
@@ -57,15 +61,18 @@ _FLIGHT_SEARCH_RESULT = {
 
 def test_monitor_flights(mocker: pytest_mock.MockFixture):
     mock_discord = mocker.patch("third_party.discord.client.send_to_flight")
-    mock_filter_flights_of_interest = mocker.patch(
-        "jobs.monitor_flights._filter_flights_of_interest", return_value=[_FLIGHT_SEARCH_RESULT]
-    )
     mock_aviation_request = mocker.patch(
         "third_party.aviationstack.request.get_live_flights", return_value=[_FLIGHT_SEARCH_RESULT]
     )
 
-    monitor_flights.main("ICN", "NRT")
+    monitor_flights.main(
+        flight_start=datetime.datetime(2025, 2, 23, 12, 40).replace(tzinfo=time_utils.TimeZone.SEOUL.value),
+        flight_end=datetime.datetime(2025, 2, 23, 14, 55).replace(
+            tzinfo=airport_utils.get_timezone_by_iata_code("NRT")
+        ),
+        dep_iata="ICN",
+        arr_iata="NRT",
+    )
 
-    mock_filter_flights_of_interest.assert_called_once_with([_FLIGHT_SEARCH_RESULT])
     mock_aviation_request.assert_called_once_with(dep_iata="ICN", arr_iata="NRT", airline="asiana")
     mock_discord.call_count == 1
