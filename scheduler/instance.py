@@ -11,16 +11,18 @@ def _crash_report(event: events.JobEvent):
     kakaotalk.send_to_me(f"Job {event.job_id} crashed with exception: {event.jobstore}")
 
 
-def _heartbeat() -> None:
-    logger.info("Hearbeat heard")
-
-
 DefaultBackgroundScheduler = background.BackgroundScheduler(
     job_defaults=spec.get_scheduler_args(),
     jobstores=spec.get_jobstores(),
     executors=spec.get_executor(),
     timezone=pytz.timezone("Asia/Seoul"),
 )
+
+
+def _heartbeat() -> None:
+    jobs = DefaultBackgroundScheduler.get_jobs()
+    for job in jobs:
+        logger.debug(f"Job {job.id} is scheduled at {job.next_run_time}")
 
 
 DefaultBackgroundScheduler.add_job(_heartbeat, "interval", minutes=10)
