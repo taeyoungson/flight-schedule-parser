@@ -9,12 +9,13 @@ _SYSTEM_PROMPT = """
      - Given multiple lines of weather data in the format of
      f"{date}: {weather emoji} ↓{lowest}℃ / ↑{highest}℃",
      Recommend appropriate clothing in detail that is neither cold nor hot.
+     - If it's possible to group the weather data by date, it would be better.
+     - If rain or snow is expected, recommend an umbrella or snow boots.
 
      Must Follow:
      - Use Korean.
      - Your response should contain no more lines than the given weather data.
-     - You should respond is following format:
-     f"`{date}` {emoji} ->  {clothing recommendation}"
+     - Use some emojis, be friendly and informative.
 """
 
 

@@ -10,11 +10,15 @@ class TimeZone(enum.Enum):
 
 class DateTimeFormatter(enum.Enum):
     DATE = "%Y-%m-%d"
+    FULL = "%Y-%m-%dT%H:%M:%S+00:00"
     COMPACTDATE = "%m/%d"
     COMPACTDATE_KR = "%m월 %d일"
 
     def format(self, datetime_: datetime.datetime) -> str:
         return datetime_.strftime(self.value)
+
+    def parse(self, datetime_string: str) -> datetime.datetime:
+        return datetime.datetime.strptime(datetime_string, self.value)
 
 
 def now() -> datetime.datetime:
@@ -78,6 +82,8 @@ def format_datetime(datetime_: datetime.datetime) -> str:
 
 
 def pretty_datetime(datetime_: datetime.datetime) -> str:
+    month = datetime_.month
+    day = datetime_.day
     hours = datetime_.hour
     minutes = datetime_.minute
 
@@ -85,7 +91,7 @@ def pretty_datetime(datetime_: datetime.datetime) -> str:
     if hours > 12:
         hours -= 12
 
-    return f"{prefix} {hours:02d}시 {minutes:02d}분"
+    return f"{month: 02}월 {day: 02}일 {prefix} {hours:02d}시 {minutes:02d}분"
 
 
 def to_timezone(datetime_: datetime.datetime, tzinfo: zoneinfo.ZoneInfo) -> datetime.datetime:
@@ -93,8 +99,8 @@ def to_timezone(datetime_: datetime.datetime, tzinfo: zoneinfo.ZoneInfo) -> date
 
 
 def is_datetime_between(datetime_: datetime.datetime, start: datetime.datetime, end: datetime.datetime) -> bool:
-    return start <= datetime_ and datetime_ <= end
+    return start <= datetime_ <= end
 
 
 def is_date_between(date: datetime.date, start: datetime.date, end: datetime.date) -> bool:
-    return start <= date and date <= end
+    return start <= date <= end
