@@ -59,7 +59,7 @@ def _search_return_flight_schedule(
     raise ValueError(f"Return flight schedule not found for {flight}")
 
 
-@instance.DefaultBackgroundScheduler.scheduled_job(jobs.TriggerType.CRON, hour=00, minute=10)
+@instance.DefaultBackgroundScheduler.scheduled_job(jobs.TriggerType.CRON, hour=12, minute=0)
 def main():
     logger.debug("Registering weather monitering jobs...")
     today = time_utils.get_today_as_date()

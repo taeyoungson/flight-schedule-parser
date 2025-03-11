@@ -27,8 +27,10 @@ class GoogleCalendar:
     def _create_event(self, evt: event.Event) -> None:
         self._calendar.add_event(evt)
 
-    def _get_events(self, time_min: datetime.datetime, time_max: datetime.datetime) -> Iterable[event.Event]:
-        return self._calendar.get_events(time_min=time_min, time_max=time_max)
+    def _get_events(
+        self, time_min: datetime.datetime, time_max: datetime.datetime, timezone: str = "Asia/Seoul"
+    ) -> Iterable[event.Event]:
+        return self._calendar.get_events(time_min=time_min, time_max=time_max, timezone=timezone)
 
     def create_event(
         self,
@@ -51,8 +53,10 @@ class GoogleCalendar:
         )
         self._create_event(evt)
 
-    def get_events(self, time_min: datetime.datetime, time_max: datetime.datetime) -> list[event.Event]:
-        return list(self._get_events(time_min, time_max))
+    def get_events(
+        self, time_min: datetime.datetime, time_max: datetime.datetime, timezone: str = "Asia/Seoul"
+    ) -> list[event.Event]:
+        return list(self._get_events(time_min, time_max, timezone))
 
 
 def load_google_calendar_client():

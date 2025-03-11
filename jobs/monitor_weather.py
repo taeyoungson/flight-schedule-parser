@@ -91,7 +91,7 @@ def main(
     discord.send_to_weather(
         message=(
             f"<@{discord_settings.ARIES_PIG}>님!\n"
-            + f"**{time_utils.DateTimeFormatter.COMPACTDATE_KR.format(arrival_time)}**부터 **{time_utils.DateTimeFormatter.COMPACTDATE_KR.format(leaving_time)}**까지 **{airport_utils.get_cityname_by_iata_code(arrival_airport)}** 날씨 보고서를 가져왔어요🌡️\n"
+            + f"**{time_utils.DateTimeFormatter.COMPACTDATE_KR.format(margined_arrival_time)}**부터 **{time_utils.DateTimeFormatter.COMPACTDATE_KR.format(margined_leaving_time)}**까지 **{airport_utils.get_cityname_by_iata_code(arrival_airport)}** 날씨 보고서를 가져왔어요🌡️\n"
             + "```\n"
             + f"{summary}"
             + "```\n"
