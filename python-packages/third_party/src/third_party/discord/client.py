@@ -39,7 +39,7 @@ def send_to_weather(message: str, image_url: str | None = None) -> None:
     embeds = []
 
     if not config.weather_webhook:
-        logger.warning("discord dev_webhook is not set. Skip sending message to dev.")
+        logger.warning("discord weather_webhook is not set. Skip sending message to dev.")
         return
 
     if image_url:
@@ -66,7 +66,7 @@ def send_to_flight(message: str, image_url: str | None = None) -> None:
     embeds = []
 
     if not config.flight_webhook:
-        logger.warning("discord schedule__webhook is not set. Skip sending message to dev.")
+        logger.warning("discord flight_webhook is not set. Skip sending message to dev.")
         return
 
     if image_url:
@@ -74,7 +74,7 @@ def send_to_flight(message: str, image_url: str | None = None) -> None:
 
     try:
         response = requests.post(
-            url=config.schedule_webhook,
+            url=config.flight_webhook,
             data=json.dumps(
                 {
                     "content": textwrap.dedent(message),
