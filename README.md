@@ -28,3 +28,14 @@
 - **AviationStack**: Flight status monitoring
 - **OpenAI**: Summarize weather information, recommend clothing based on the user's flight schedule
 - **Imgbb**: Image hosting for messaging services
+
+## Examples
+
+### Automatically register flight schedules to calendar
+![image](https://github.com/user-attachments/assets/3ba22476-f4ea-4650-9378-33385ce473db)
+
+### Flight monitoring example
+![image](https://github.com/user-attachments/assets/5901cb49-b9d6-4b29-8d15-935a560100be)
+
+### AI summarizes weather information around destination city.
+![image](https://github.com/user-attachments/assets/c6df6745-c2a7-42da-bbb1-6c87bd01314d)
