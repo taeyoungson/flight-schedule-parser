@@ -2,7 +2,7 @@ import abc
 
 from langchain import chat_models
 from langchain_core import messages
-from overrides import overrides
+import overrides
 
 from . import config as llm_config
 from . import models as llm_models
@@ -24,6 +24,10 @@ class BaseChatClient(abc.ABC):
     def invoke(self, message: str) -> messages.AIMessage:
         pass
 
+    @abc.abstractmethod
+    def ainvoke(self, message: str) -> messages.AIMessage:
+        pass
+
 
 class OpenAIChatClient(BaseChatClient):
     _system_prompt: str
@@ -36,11 +40,25 @@ class OpenAIChatClient(BaseChatClient):
             api_key=self._config.openai_api_key,
         )
 
-    @overrides
-    def invoke(self, message: str) -> messages.AIMessage:
+    @overrides.override
+    def invoke(self, message: str | list[str]) -> messages.AIMessage:
+        if isinstance(message, str):
+            message = [message]
         return self._model.invoke(
             [
                 messages.SystemMessage(self._system_prompt),
-                messages.HumanMessage(message),
-            ],
+            ]
+            + [messages.HumanMessage(msg) for msg in message],
+        )
+
+    @overrides.override
+    def ainvoke(self, message: str | list[str]) -> messages.AIMessage:
+        if isinstance(message, str):
+            message = [message]
+
+        return self._model.ainvoke(
+            [
+                messages.SystemMessage(self._system_prompt),
+            ]
+            + [messages.HumanMessage(msg) for msg in message],
         )

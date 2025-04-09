@@ -7,7 +7,7 @@ from third_party.kakao import watcher
 from third_party.openweather import client as openweather
 from third_party.openweather import dto as openweather_dto
 
-from models import weather_bot
+from bots.openai import weather_bot
 from utils import airports as airport_utils
 from utils import times as time_utils
 
