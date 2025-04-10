@@ -9,6 +9,7 @@ dependencies = [
     "apscheduler>=3.11.0",
     "discord-py>=2.5.2",
     "fastapi>=0.115.8",
+    "fastmcp>=0.4.1",
     "gcsa>=2.5.1",
     "loguru>=0.7.3",
     "pydantic-settings>=2.7.1",
