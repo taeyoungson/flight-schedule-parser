@@ -60,12 +60,13 @@ class OpenAIChatClient(BaseChatClient):
         if isinstance(message, str):
             message = [message]
 
+        if tool_message is None:
+            tool_message = []
+
         return self._model.ainvoke(
             [messages.SystemMessage(self._system_prompt)]
             + [messages.HumanMessage(msg) for msg in message]
             + tool_message
-            if tool_message
-            else [],
         )
 
     def invoke_tools(self, message: str | list[str]) -> messages.AIMessage:

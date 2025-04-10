@@ -46,7 +46,7 @@ class JarvisDiscordBot(base.DiscordChatBot):
                 tool_message.append(response)
 
                 for call in tool_calls:
-                    tool_call_response = getattr(tools, tool_calls[0]["name"]).invoke(tool_calls[0])
+                    tool_call_response = getattr(tools, call["name"]).invoke(call)
                     logger.debug(f"Tool call response: {tool_call_response}")
                     tool_message.append(tool_call_response)
 
