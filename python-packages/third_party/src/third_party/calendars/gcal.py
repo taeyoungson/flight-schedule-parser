@@ -58,6 +58,13 @@ class GoogleCalendar:
     ) -> list[event.Event]:
         return list(self._get_events(time_min, time_max, timezone))
 
+    def _delete_event(self, evt: event.Event):
+        self._calendar.delete_event(evt)
+
+    def delete_events(self, evts: list[event.Event]) -> None:
+        for e in evts:
+            self._delete_event(e)
+
 
 def load_google_calendar_client():
     return GoogleCalendar()

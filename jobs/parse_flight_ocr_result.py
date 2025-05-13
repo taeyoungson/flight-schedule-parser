@@ -9,6 +9,7 @@ from third_party.kakao import watcher
 
 from utils import airports as airport_utils
 from utils import flights as flight_utils
+from utils import times as time_utils
 
 
 def _preprocess_raw_string(raw_string: str) -> list[str]:
@@ -103,6 +104,14 @@ def build_flight_schedule(raw_ocr_result: str, year: int | None = None, month: i
 
     logger.info(f"Number of schedules: {num_schedules}")
     calendar = gcal.load_google_calendar_client()
+
+    # clear existing events in target events
+    events_in_month = calendar.get_events(
+        time_min=time_utils.get_start_of_the_month(year, month),
+        time_max=time_utils.get_end_of_the_month(year, month),
+    )
+    calendar.delete_events(events_in_month)
+
     for f in flights:
         logger.info(f"Departure: {f.departure_time}, Arrival: {f.arrival_time}")
         calendar.create_event(
