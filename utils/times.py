@@ -73,6 +73,16 @@ def get_end_of_the_day(date: datetime.date) -> datetime.datetime:
     return datetime.datetime.combine(date, datetime.time.max)
 
 
+def get_start_of_the_month(year: int, month: int) -> datetime.datetime:
+    return datetime.datetime(year, month, 1, 0, 0, 0)
+
+
+def get_end_of_the_month(year: int, month: int) -> datetime.datetime:
+    if month == 12:
+        return datetime.datetime(year + 1, 1, 1, 23, 59, 59) - datetime.timedelta(days=1)
+    return datetime.datetime(year, month + 1, 1, 23, 59, 59) - datetime.timedelta(days=1)
+
+
 def parse_datetime(datetime_string: str) -> datetime.datetime:
     return datetime.datetime.strptime(datetime_string, "%Y-%m-%dT%H:%M:%S+00:00")
 
